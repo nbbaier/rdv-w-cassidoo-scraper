@@ -1,13 +1,16 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
 
-const questions = await getCollection('questions');
+const questions = await getCollection("questions");
 questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const questionsWithExcerpts = questions.map(q => ({
+const questionsWithExcerpts = questions.map((q) => ({
 	...q,
-	excerpt: q.body.replace(/[#*\[\]\(\)]/g, '').replace(/`/g, '').slice(0, 150)
+	excerpt: q.body
+		.replace(/[#*[\]()]/g, "")
+		.replace(/`/g, "")
+		.slice(0, 150),
 }));
 ---
 
@@ -116,9 +119,10 @@ const questionsWithExcerpts = questions.map(q => ({
 				} else if (searchIndex.length > 0) {
 					matchesTerm = matchingSlugs.has(slug);
 				} else {
-					const textContent = item.textContent || '';
-					matchesTerm = date.includes(term) || number.includes(term) || textContent.toLowerCase().includes(term);
-				}
+					matchesTerm = date.includes(term) || 
+						number.includes(term) || 
+						(element.textContent || '').toLowerCase().includes(term);
+				})
 
 				if (matchesTerm) {
 					item.style.display = 'block';
