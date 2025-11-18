@@ -4,6 +4,11 @@ import Layout from '../layouts/Layout.astro';
 
 const questions = await getCollection('questions');
 questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const questionsWithExcerpts = questions.map(q => ({
+	...q,
+	excerpt: q.body.replace(/[#*\[\]\(\)]/g, '').replace(/`/g, '').slice(0, 150)
+}));
 ---
 
 <Layout title="Cassidoo's Interview Questions Archive">
@@ -33,7 +38,7 @@ questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 	</div>
 
 	<div id="questions-list" class="space-y-4">
-		{questions.map((question) => (
+		{questionsWithExcerpts.map((question) => (
 			<a
 				href={`/questions/${question.slug}`}
 				class="question-item block bg-white p-6 rounded-lg shadow-sm border border-slate-100 hover:border-indigo-300 hover:shadow-md transition-all group"
@@ -47,8 +52,7 @@ questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 					<time class="text-sm text-slate-400">{question.data.date.toISOString().split('T')[0]}</time>
 				</div>
 				<div class="question-excerpt text-slate-700 line-clamp-2 group-hover:text-slate-900">
-					{/* We render a preview of the content text - stripping markdown for cleaner preview */}
-					{question.body.replace(/[#*`\[\]()]/g, '').slice(0, 150)}...
+					{question.excerpt}...
 				</div>
 			</a>
 		))}
@@ -59,78 +63,4 @@ questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 	</div>
 </Layout>
 
-<script>
-	// Simple client-side search
-	const searchInput = document.getElementById('search-input');
-	const list = document.getElementById('questions-list');
-	const noResults = document.getElementById('no-results');
-	
-	// Fetch the search index for full text search
-	let searchIndex = [];
-	
-	// Pre-load search index
-	fetch('/search.json')
-		.then(res => res.json())
-		.then(data => {
-			searchIndex = data;
-		})
-		.catch(err => console.error('Failed to load search index', err));
-
-	if (searchInput && list) {
-		searchInput.addEventListener('input', (e) => {
-			const target = e.target;
-			const term = target ? target.value.toLowerCase() : '';
-			const items = document.querySelectorAll('.question-item');
-			let hasVisible = false;
-
-			const matchingSlugs = new Set();
-			if (term.length > 0 && searchIndex.length > 0) {
-				searchIndex.forEach(item => {
-					if (
-						item.excerpt.toLowerCase().includes(term) || 
-						item.date.includes(term) || 
-						String(item.number).includes(term) ||
-						item.slug.includes(term)
-					) {
-						matchingSlugs.add(item.slug);
-					}
-				});
-			}
-
-			items.forEach((item) => {
-				const element = item;
-				const date = element.dataset.date || '';
-				const number = element.dataset.number || '';
-				// get slug from href
-				const href = element.getAttribute('href') || '';
-				const slug = href.split('/').pop();
-				
-				let matchesTerm = false;
-				if (term === '') {
-					matchesTerm = true;
-				} else if (searchIndex.length > 0) {
-					matchesTerm = matchingSlugs.has(slug);
-				} else {
-					matchesTerm = date.includes(term) || 
-						number.includes(term) || 
-						(element.textContent || '').toLowerCase().includes(term);
-				}
-
-				if (matchesTerm) {
-					element.style.display = 'block';
-					hasVisible = true;
-				} else {
-					element.style.display = 'none';
-				}
-			});
-
-			if (noResults) {
-				if (hasVisible) {
-					noResults.classList.add('hidden');
-				} else {
-					noResults.classList.remove('hidden');
-				}
-			}
-		});
-	}
-</script>
+<script src="../scripts/search.js"></script>
