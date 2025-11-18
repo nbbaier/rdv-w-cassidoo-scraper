@@ -1,0 +1,136 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const questions = await getCollection('questions');
+questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Layout title="Cassidoo's Interview Questions Archive">
+	<div class="mb-8">
+		<div class="relative max-w-lg mx-auto">
+			<input
+				type="text"
+				id="search-input"
+				placeholder="Search questions..."
+				class="w-full px-4 py-3 pl-12 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm"
+			/>
+			<svg
+				class="absolute left-4 top-3.5 h-5 w-5 text-slate-400"
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+				/>
+			</svg>
+		</div>
+	</div>
+
+	<div id="questions-list" class="space-y-4">
+		{questions.map((question) => (
+			<a
+				href={`/questions/${question.slug}`}
+				class="question-item block bg-white p-6 rounded-lg shadow-sm border border-slate-100 hover:border-indigo-300 hover:shadow-md transition-all group"
+				data-date={question.data.date.toISOString().split('T')[0]}
+				data-number={question.data.number}
+			>
+				<div class="flex justify-between items-start mb-2">
+					<span class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full group-hover:bg-indigo-100 transition-colors">
+						#{question.data.number}
+					</span>
+					<time class="text-sm text-slate-400">{question.data.date.toISOString().split('T')[0]}</time>
+				</div>
+				<div class="question-excerpt text-slate-700 line-clamp-2 group-hover:text-slate-900">
+					{/* We render a preview of the content text - stripping markdown for cleaner preview */}
+					{question.body.replace(/[#*`\[\]()]/g, '').slice(0, 150)}...
+				</div>
+			</a>
+		))}
+	</div>
+
+	<div id="no-results" class="hidden text-center py-12 text-slate-500">
+		No questions found matching your search.
+	</div>
+</Layout>
+
+<script>
+	// Simple client-side search
+	const searchInput = document.getElementById('search-input');
+	const list = document.getElementById('questions-list');
+	const noResults = document.getElementById('no-results');
+	
+	// Fetch the search index for full text search
+	let searchIndex = [];
+	
+	// Pre-load search index
+	fetch('/search.json')
+		.then(res => res.json())
+		.then(data => {
+			searchIndex = data;
+		})
+		.catch(err => console.error('Failed to load search index', err));
+
+	if (searchInput && list) {
+		searchInput.addEventListener('input', (e) => {
+			const target = e.target;
+			const term = target ? target.value.toLowerCase() : '';
+			const items = document.querySelectorAll('.question-item');
+			let hasVisible = false;
+
+			const matchingSlugs = new Set();
+			if (term.length > 0 && searchIndex.length > 0) {
+				searchIndex.forEach(item => {
+					if (
+						item.excerpt.toLowerCase().includes(term) || 
+						item.date.includes(term) || 
+						String(item.number).includes(term) ||
+						item.slug.includes(term)
+					) {
+						matchingSlugs.add(item.slug);
+					}
+				});
+			}
+
+			items.forEach((item) => {
+				const element = item;
+				const date = element.dataset.date || '';
+				const number = element.dataset.number || '';
+				// get slug from href
+				const href = element.getAttribute('href') || '';
+				const slug = href.split('/').pop();
+				
+				let matchesTerm = false;
+				if (term === '') {
+					matchesTerm = true;
+				} else if (searchIndex.length > 0) {
+					matchesTerm = matchingSlugs.has(slug);
+				} else {
+					matchesTerm = date.includes(term) || 
+						number.includes(term) || 
+						(element.textContent || '').toLowerCase().includes(term);
+				}
+
+				if (matchesTerm) {
+					element.style.display = 'block';
+					hasVisible = true;
+				} else {
+					element.style.display = 'none';
+				}
+			});
+
+			if (noResults) {
+				if (hasVisible) {
+					noResults.classList.add('hidden');
+				} else {
+					noResults.classList.remove('hidden');
+				}
+			}
+		});
+	}
+</script>

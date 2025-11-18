@@ -44,4 +44,4 @@ for (const url of urls) {
 	}
 }
 
-await Bun.write("data.json", JSON.stringify(data, null, 2));
+await Bun.write("./scraper/data/data.json", JSON.stringify(data, null, 2));

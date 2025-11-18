@@ -1,0 +1,76 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+	const questions = await getCollection('questions');
+	return questions.map((question) => ({
+		params: { slug: question.slug },
+		props: { question },
+	}));
+}
+
+const { question } = Astro.props;
+const { Content } = await question.render();
+
+const date = new Date(question.data.date).toLocaleDateString('en-US', {
+	weekday: 'long',
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+});
+---
+
+<Layout title={`Question #${question.data.number} - Cassidoo's Interview Questions`}>
+	<article class="prose prose-slate max-w-none bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+		<div class="flex items-center justify-between mb-6 not-prose">
+			<span class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+				#{question.data.number}
+			</span>
+			<time class="text-sm text-slate-500">{date}</time>
+		</div>
+		
+		<div class="markdown-content">
+			<Content />
+		</div>
+
+		<div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center not-prose">
+			<a href="/" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2">
+				← Back to all questions
+			</a>
+			<a 
+				href={question.data.url} 
+				target="_blank" 
+				rel="noopener noreferrer"
+				class="text-slate-500 hover:text-slate-700 text-sm flex items-center gap-1"
+			>
+				View original newsletter ↗
+			</a>
+		</div>
+	</article>
+</Layout>
+
+<style is:global>
+	/* Custom styling for the markdown content to look nice */
+	.markdown-content h2 {
+		@apply text-2xl font-bold text-slate-900 mt-0 mb-4;
+	}
+	.markdown-content p {
+		@apply mb-4 leading-relaxed text-slate-700;
+	}
+	.markdown-content pre {
+		@apply bg-slate-900 text-slate-50 p-4 rounded-lg overflow-x-auto mb-6;
+	}
+	.markdown-content code {
+		@apply bg-slate-100 text-pink-600 px-1.5 py-0.5 rounded text-sm font-mono;
+	}
+	.markdown-content pre code {
+		@apply bg-transparent text-inherit p-0 text-sm;
+	}
+	.markdown-content ul {
+		@apply list-disc list-outside ml-6 mb-4 space-y-1 text-slate-700;
+	}
+	.markdown-content li {
+		@apply pl-1;
+	}
+</style>

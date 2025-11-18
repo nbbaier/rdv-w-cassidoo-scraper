@@ -77,7 +77,7 @@ export async function getQuestion(email: Email) {
 	const dom = await JSDOM.fromURL(email.url);
 	const html = wrapContentBetweenHRs(dom);
 
-	await Bun.write(`./data/html/${email.date}.html`, html);
+	await Bun.write(`./scraper/data/html/${email.date}.html`, html);
 
 	const { document } = new JSDOM(html).window;
 
@@ -101,5 +101,5 @@ number: ${email.number}
 ${String(file)}
 		`;
 
-	await Bun.write(`./data/questions/${email.date}.md`, output);
+	await Bun.write(`./src/content/questions/${email.date}.md`, output);
 }
