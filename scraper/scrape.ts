@@ -7,14 +7,14 @@ const data: Email[] = [];
 
 const urls: string[] = [
 	"https://buttondown.com/cassidoo/archive/?page=1",
-	// "https://buttondown.com/cassidoo/archive/?page=2",
-	// "https://buttondown.com/cassidoo/archive/?page=3",
-	// "https://buttondown.com/cassidoo/archive/?page=4",
-	// "https://buttondown.com/cassidoo/archive/?page=5",
-	// "https://buttondown.com/cassidoo/archive/?page=6",
-	// "https://buttondown.com/cassidoo/archive/?page=7",
-	// "https://buttondown.com/cassidoo/archive/?page=8",
-	// "https://buttondown.com/cassidoo/archive/?page=9",
+	"https://buttondown.com/cassidoo/archive/?page=2",
+	"https://buttondown.com/cassidoo/archive/?page=3",
+	"https://buttondown.com/cassidoo/archive/?page=4",
+	"https://buttondown.com/cassidoo/archive/?page=5",
+	"https://buttondown.com/cassidoo/archive/?page=6",
+	"https://buttondown.com/cassidoo/archive/?page=7",
+	"https://buttondown.com/cassidoo/archive/?page=8",
+	"https://buttondown.com/cassidoo/archive/?page=9",
 ];
 
 for (const url of urls) {
