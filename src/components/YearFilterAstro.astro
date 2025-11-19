@@ -1,0 +1,50 @@
+---
+import Select from './ui-astro/Select.astro';
+
+interface Props {
+	years: number[];
+	className?: string;
+}
+
+const { years, className = '' } = Astro.props;
+
+// Get current year from URL params
+const url = new URL(Astro.request.url);
+const selectedYear = url.searchParams.get('year') || '';
+---
+
+<Select
+	name="year-filter"
+	id="year-filter"
+	class={className}
+	data-current-year={selectedYear || 'all'}
+>
+	<option value="all" selected={!selectedYear}>All Years</option>
+	{years.map((year) => (
+		<option value={year} selected={selectedYear === String(year)}>{year}</option>
+	))}
+</Select>
+
+<script>
+	// Handle year filter change
+	const select = document.getElementById('year-filter') as HTMLSelectElement;
+
+	if (select) {
+		select.addEventListener('change', (e) => {
+			const target = e.target as HTMLSelectElement;
+			const value = target.value;
+			const url = new URL(window.location.href);
+
+			if (value === 'all') {
+				url.searchParams.delete('year');
+			} else {
+				url.searchParams.set('year', value);
+			}
+
+			// Reset to page 1 when filter changes
+			url.searchParams.delete('page');
+
+			window.location.href = url.toString();
+		});
+	}
+</script>

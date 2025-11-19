@@ -1,0 +1,175 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from './ui-astro/Button.astro';
+import Input from './ui-astro/Input.astro';
+import Select from './ui-astro/Select.astro';
+
+interface Props {
+	currentPage: number;
+	totalPages: number;
+	pageSize: number;
+	totalItems: number;
+	showingStart: number;
+	showingEnd: number;
+}
+
+const {
+	currentPage,
+	totalPages,
+	pageSize,
+	totalItems,
+	showingStart,
+	showingEnd,
+} = Astro.props;
+
+const showingRange = totalItems === 0 ? "0-0" : `${showingStart}-${showingEnd}`;
+const maxPages = Math.max(totalPages, 1);
+---
+
+<div class="flex gap-3 p-4 mx-auto max-w-4xl bg-white rounded-lg border shadow-sm flex-col border-slate-100">
+	<div class="flex gap-4 justify-between items-center">
+		<div class="flex gap-2 items-center">
+			<label
+				for="page-size"
+				class="hidden text-sm text-slate-600 sm:inline"
+			>
+				Show:
+			</label>
+			<Select
+				name="page-size"
+				id="page-size"
+				value={String(pageSize)}
+			>
+				<option value="10" selected={pageSize === 10}>10</option>
+				<option value="25" selected={pageSize === 25}>25</option>
+				<option value="50" selected={pageSize === 50}>50</option>
+				<option value="100" selected={pageSize === 100}>100</option>
+			</Select>
+			<span class="hidden text-sm text-slate-600 sm:inline">
+				per page
+			</span>
+		</div>
+
+		<div class="flex gap-2 items-center">
+			<Button
+				variant="outline"
+				size="icon-sm"
+				id="prev-page"
+				disabled={currentPage === 1}
+			>
+				<Icon name="lucide:chevron-left" class="size-4" />
+			</Button>
+			<div class="flex gap-1.5 items-center">
+				<Input
+					type="number"
+					id="page-input"
+					min="1"
+					max={maxPages}
+					value={String(currentPage)}
+					class="text-sm h-9 w-10 sm:w-10 px-1.5 sm:px-2 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+				/>
+				<span class="text-sm text-slate-600">/</span>
+				<span class="text-sm text-slate-600">
+					{maxPages}
+				</span>
+			</div>
+			<Button
+				variant="outline"
+				size="icon-sm"
+				id="next-page"
+				disabled={currentPage === totalPages || totalPages === 0}
+			>
+				<Icon name="lucide:chevron-right" class="size-4" />
+			</Button>
+		</div>
+
+		<div class="hidden text-sm text-slate-600 sm:block">
+			{showingRange} of {totalItems}
+		</div>
+	</div>
+
+	<!-- Mobile-only total count -->
+	<div class="text-xs text-center text-slate-500 sm:hidden">
+		{showingRange} of {totalItems} questions
+	</div>
+</div>
+
+<script>
+	function updateURL(params: Record<string, string | null>) {
+		const url = new URL(window.location.href);
+
+		Object.entries(params).forEach(([key, value]) => {
+			if (value === null) {
+				url.searchParams.delete(key);
+			} else {
+				url.searchParams.set(key, value);
+			}
+		});
+
+		window.location.href = url.toString();
+	}
+
+	// Page size change handler
+	const pageSizeSelect = document.getElementById('page-size') as HTMLSelectElement;
+	if (pageSizeSelect) {
+		pageSizeSelect.addEventListener('change', (e) => {
+			const size = (e.target as HTMLSelectElement).value;
+			updateURL({ pageSize: size, page: null });
+		});
+	}
+
+	// Previous page handler
+	const prevButton = document.getElementById('prev-page') as HTMLButtonElement;
+	if (prevButton) {
+		prevButton.addEventListener('click', () => {
+			const url = new URL(window.location.href);
+			const currentPage = parseInt(url.searchParams.get('page') || '1');
+			if (currentPage > 1) {
+				updateURL({ page: String(currentPage - 1) });
+			}
+		});
+	}
+
+	// Next page handler
+	const nextButton = document.getElementById('next-page') as HTMLButtonElement;
+	if (nextButton) {
+		nextButton.addEventListener('click', () => {
+			const url = new URL(window.location.href);
+			const currentPage = parseInt(url.searchParams.get('page') || '1');
+			const totalPages = parseInt(nextButton.dataset.totalPages || '1');
+			if (currentPage < totalPages) {
+				updateURL({ page: String(currentPage + 1) });
+			}
+		});
+	}
+
+	// Page input handler
+	const pageInput = document.getElementById('page-input') as HTMLInputElement;
+	if (pageInput) {
+		const handlePageJump = () => {
+			const page = parseInt(pageInput.value);
+			const max = parseInt(pageInput.max);
+			if (page >= 1 && page <= max) {
+				updateURL({ page: String(page) });
+			} else {
+				const url = new URL(window.location.href);
+				pageInput.value = url.searchParams.get('page') || '1';
+			}
+		};
+
+		pageInput.addEventListener('blur', handlePageJump);
+		pageInput.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				handlePageJump();
+			}
+		});
+	}
+</script>
+
+<script is:inline define:vars={{ totalPages }}>
+	// Pass totalPages to next button
+	const nextBtn = document.getElementById('next-page');
+	if (nextBtn) {
+		nextBtn.dataset.totalPages = String(totalPages);
+	}
+</script>

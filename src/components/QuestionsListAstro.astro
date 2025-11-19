@@ -1,0 +1,145 @@
+---
+import { Icon } from 'astro-icon/components';
+import Badge from './ui-astro/Badge.astro';
+import Card from './ui-astro/Card.astro';
+import CardContent from './ui-astro/CardContent.astro';
+import Input from './ui-astro/Input.astro';
+import PaginationControlsAstro from './PaginationControlsAstro.astro';
+import YearFilterAstro from './YearFilterAstro.astro';
+
+interface Question {
+	slug: string;
+	number: number;
+	date: string;
+	excerpt: string;
+	year: number;
+}
+
+interface Props {
+	questions: Question[];
+	years: number[];
+}
+
+const { questions, years } = Astro.props;
+
+// Get URL params for initial state
+const url = new URL(Astro.request.url);
+const searchTerm = url.searchParams.get('search') || '';
+const selectedYear = url.searchParams.get('year') || '';
+const currentPage = parseInt(url.searchParams.get('page') || '1');
+const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
+
+// Filter questions server-side for initial render
+let filteredQuestions = questions;
+
+if (selectedYear) {
+	filteredQuestions = filteredQuestions.filter(
+		(q) => q.year === parseInt(selectedYear, 10)
+	);
+}
+
+if (searchTerm) {
+	const term = searchTerm.toLowerCase();
+	filteredQuestions = filteredQuestions.filter(
+		(q) =>
+			q.date.includes(term) ||
+			String(q.number).includes(term) ||
+			q.excerpt.toLowerCase().includes(term)
+	);
+}
+
+// Calculate pagination
+const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+const startIdx = (currentPage - 1) * pageSize;
+const endIdx = Math.min(startIdx + pageSize, filteredQuestions.length);
+const paginatedQuestions = filteredQuestions.slice(startIdx, endIdx);
+---
+
+<div id="questions-container">
+	<div class="mb-4 space-y-4">
+		<!-- Search and Year Filter -->
+		<div class="flex gap-2 mx-auto max-w-4xl sm:flex-row">
+			<div class="relative flex-1">
+				<Icon name="lucide:search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+				<Input
+					type="text"
+					id="search-input"
+					placeholder="Search questions..."
+					value={searchTerm}
+					class="h-10 px-4 pl-10 bg-background"
+				/>
+			</div>
+
+			<YearFilterAstro
+				years={years}
+				className="h-10! bg-background"
+			/>
+		</div>
+
+		<!-- Pagination Controls -->
+		<PaginationControlsAstro
+			currentPage={currentPage}
+			totalPages={totalPages}
+			pageSize={pageSize}
+			totalItems={filteredQuestions.length}
+			showingStart={startIdx + 1}
+			showingEnd={endIdx}
+		/>
+	</div>
+
+	<!-- Questions List -->
+	<div class="flex flex-col gap-2" id="questions-list">
+		{paginatedQuestions.length > 0 ? (
+			paginatedQuestions.map((question) => (
+				<a key={question.slug} href={`/questions/${question.slug}`}>
+					<Card class="transition-all hover:border-indigo-300 hover:shadow-md group cursor-pointer">
+						<CardContent class="p-6">
+							<div class="flex justify-between items-start mb-2">
+								<Badge class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-transparent">
+									#{question.number}
+								</Badge>
+								<time class="text-sm text-slate-400">
+									{question.date}
+								</time>
+							</div>
+							<div class="text-slate-700 line-clamp-2 group-hover:text-slate-900">
+								{question.excerpt}...
+							</div>
+						</CardContent>
+					</Card>
+				</a>
+			))
+		) : (
+			<div class="py-12 text-center text-slate-500">
+				No questions found matching your search.
+			</div>
+		)}
+	</div>
+</div>
+
+<script>
+	// Handle search with debounce
+	let searchTimeout: NodeJS.Timeout;
+	const searchInput = document.getElementById('search-input') as HTMLInputElement;
+
+	if (searchInput) {
+		searchInput.addEventListener('input', (e) => {
+			clearTimeout(searchTimeout);
+			searchTimeout = setTimeout(() => {
+				const value = (e.target as HTMLInputElement).value;
+				const url = new URL(window.location.href);
+
+				if (value) {
+					url.searchParams.set('search', value);
+				} else {
+					url.searchParams.delete('search');
+				}
+
+				// Reset to page 1 when search changes
+				url.searchParams.delete('page');
+
+				window.location.href = url.toString();
+			}, 300);
+		});
+	}
+</script>

@@ -1,9 +1,10 @@
 ---
 import { getCollection } from "astro:content";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Icon } from 'astro-icon/components';
+import Badge from "@/components/ui-astro/Badge.astro";
+import Button from "@/components/ui-astro/Button.astro";
+import Card from "@/components/ui-astro/Card.astro";
+import CardContent from "@/components/ui-astro/CardContent.astro";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -35,46 +36,36 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
 <Layout
    title={`Question #${question.data.number} - Cassidoo's Interview Questions`}
 >
-   <Card className="prose prose-slate max-w-none">
-      <CardContent className="p-8">
+   <Card class="prose prose-slate max-w-none">
+      <CardContent class="p-8">
          <div
             class="grid grid-cols-3 items-center mb-6 not-prose pb-6 border-b border-slate-100"
          >
             <div class="justify-self-start">
                {
                   prevQuestion && (
-                     <Button variant="ghost" asChild>
-                        <a
-                           href={`/questions/${prevQuestion.slug}`}
-                           class="flex items-center gap-2"
-                        >
-                           <ChevronLeft className="size-4" />
-                           <span class="text-sm text-muted-foreground">
-                              #{prevQuestion.data.number}
-                           </span>
-                        </a>
+                     <Button variant="ghost" href={`/questions/${prevQuestion.slug}`}>
+                        <Icon name="lucide:chevron-left" class="size-4" />
+                        <span class="text-sm text-muted-foreground">
+                           #{prevQuestion.data.number}
+                        </span>
                      </Button>
                   )
                }
             </div>
             <div class="justify-self-center">
-               <Button variant="ghost" size="sm" asChild>
-                  <a href="/">All questions</a>
+               <Button variant="ghost" size="sm" href="/">
+                  All questions
                </Button>
             </div>
             <div class="justify-self-end">
                {
                   nextQuestion && (
-                     <Button variant="ghost" asChild>
-                        <a
-                           href={`/questions/${nextQuestion.slug}`}
-                           class="flex items-center gap-2"
-                        >
-                           <span class="text-sm text-muted-foreground">
-                              #{nextQuestion.data.number}
-                           </span>
-                           <ChevronRight className="size-4" />
-                        </a>
+                     <Button variant="ghost" href={`/questions/${nextQuestion.slug}`}>
+                        <span class="text-sm text-muted-foreground">
+                           #{nextQuestion.data.number}
+                        </span>
+                        <Icon name="lucide:chevron-right" class="size-4" />
                      </Button>
                   )
                }
@@ -83,7 +74,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
 
          <div class="flex items-center justify-between mb-6 not-prose">
             <Badge
-               className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-transparent text-sm font-semibold px-3 py-1"
+               class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-transparent text-sm font-semibold px-3 py-1"
             >
                #{question.data.number}
             </Badge>
@@ -97,17 +88,17 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
          <div class="mt-8 pt-6 border-t border-slate-100 not-prose">
             <!-- Bottom links -->
             <div class="flex justify-between items-center">
-               <Button variant="link" asChild>
-                  <a href="/">← Back to all questions</a>
+               <Button variant="link" href="/">
+                  ← Back to all questions
                </Button>
-               <Button variant="ghost" size="sm" asChild>
-                  <a
-                     href={question.data.url}
-                     target="_blank"
-                     rel="noopener noreferrer"
-                  >
-                     View original newsletter ↗
-                  </a>
+               <Button
+                  variant="ghost"
+                  size="sm"
+                  href={question.data.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
+                  View original newsletter ↗
                </Button>
             </div>
          </div>
