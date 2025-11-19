@@ -1,5 +1,9 @@
 ---
 import { getCollection } from "astro:content";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -31,83 +35,84 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
 <Layout
    title={`Question #${question.data.number} - Cassidoo's Interview Questions`}
 >
-   <article
-      class="prose prose-slate max-w-none bg-white p-8 rounded-xl shadow-sm border border-slate-100"
-   >
-      <div
-         class="flex justify-between items-center mb-6 not-prose pb-6 border-b border-slate-100"
-      >
-         {
-            prevQuestion ? (
-               <a
-                  href={`/questions/${prevQuestion.slug}`}
-                  class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2 group"
-               >
-                  <span>← Previous</span>
-                  <span class="text-sm text-slate-500 group-hover:text-slate-700">
-                     #{prevQuestion.data.number}
-                  </span>
-               </a>
-            ) : (
-               <div />
-            )
-         }
-         <a
-            href="/"
-            class="text-slate-500 hover:text-slate-700 text-sm flex items-center gap-1"
+   <Card className="prose prose-slate max-w-none">
+      <CardContent className="p-8">
+         <div
+            class="grid grid-cols-3 items-center mb-6 not-prose pb-6 border-b border-slate-100"
          >
-            All questions
-         </a>
-         {
-            nextQuestion ? (
-               <a
-                  href={`/questions/${nextQuestion.slug}`}
-                  class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2 group"
-               >
-                  <span class="text-sm text-slate-500 group-hover:text-slate-700">
-                     #{nextQuestion.data.number}
-                  </span>
-                  <span>Next →</span>
-               </a>
-            ) : (
-               <div />
-            )
-         }
-      </div>
-
-      <div class="flex items-center justify-between mb-6 not-prose">
-         <span
-            class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full"
-         >
-            #{question.data.number}
-         </span>
-         <time class="text-sm text-slate-500">{date}</time>
-      </div>
-
-      <div class="markdown-content">
-         <Content />
-      </div>
-
-      <div class="mt-8 pt-6 border-t border-slate-100 not-prose">
-         <!-- Bottom links -->
-         <div class="flex justify-between items-center">
-            <a
-               href="/"
-               class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2"
-            >
-               ← Back to all questions
-            </a>
-            <a
-               href={question.data.url}
-               target="_blank"
-               rel="noopener noreferrer"
-               class="text-slate-500 hover:text-slate-700 text-sm flex items-center gap-1"
-            >
-               View original newsletter ↗
-            </a>
+            <div class="justify-self-start">
+               {
+                  prevQuestion && (
+                     <Button variant="ghost" asChild>
+                        <a
+                           href={`/questions/${prevQuestion.slug}`}
+                           class="flex items-center gap-2"
+                        >
+                           <ChevronLeft className="size-4" />
+                           <span class="text-sm text-muted-foreground">
+                              #{prevQuestion.data.number}
+                           </span>
+                        </a>
+                     </Button>
+                  )
+               }
+            </div>
+            <div class="justify-self-center">
+               <Button variant="ghost" size="sm" asChild>
+                  <a href="/">All questions</a>
+               </Button>
+            </div>
+            <div class="justify-self-end">
+               {
+                  nextQuestion && (
+                     <Button variant="ghost" asChild>
+                        <a
+                           href={`/questions/${nextQuestion.slug}`}
+                           class="flex items-center gap-2"
+                        >
+                           <span class="text-sm text-muted-foreground">
+                              #{nextQuestion.data.number}
+                           </span>
+                           <ChevronRight className="size-4" />
+                        </a>
+                     </Button>
+                  )
+               }
+            </div>
          </div>
-      </div>
-   </article>
+
+         <div class="flex items-center justify-between mb-6 not-prose">
+            <Badge
+               className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-transparent text-sm font-semibold px-3 py-1"
+            >
+               #{question.data.number}
+            </Badge>
+            <time class="text-sm text-slate-500">{date}</time>
+         </div>
+
+         <div class="markdown-content">
+            <Content />
+         </div>
+
+         <div class="mt-8 pt-6 border-t border-slate-100 not-prose">
+            <!-- Bottom links -->
+            <div class="flex justify-between items-center">
+               <Button variant="link" asChild>
+                  <a href="/">← Back to all questions</a>
+               </Button>
+               <Button variant="ghost" size="sm" asChild>
+                  <a
+                     href={question.data.url}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                  >
+                     View original newsletter ↗
+                  </a>
+               </Button>
+            </div>
+         </div>
+      </CardContent>
+   </Card>
 </Layout>
 
 <style is:global>
