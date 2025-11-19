@@ -2,7 +2,7 @@
 import "../styles/global.css";
 
 interface Props {
-	title: string;
+   title: string;
 }
 
 const { title } = Astro.props;
@@ -10,34 +10,46 @@ const { title } = Astro.props;
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Cassidoo's Interview Questions" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body class="bg-slate-50 text-slate-900 min-h-screen font-sans">
-		<div class="max-w-3xl mx-auto px-4 py-8">
-			<header class="mb-12 text-center">
-				<h1 class="text-4xl font-bold text-slate-900 mb-2">
-					<a href="/" class="hover:text-indigo-600 transition-colors">
-						Cassidoo's Interview Questions
-					</a>
-				</h1>
-				<p class="text-slate-600">
-					A collection of weekly interview questions from <a href="https://cassidoo.co/newsletter/" class="text-indigo-600 hover:underline" target="_blank" rel="noopener noreferrer">cassidoo's newsletter</a>.
-				</p>
-			</header>
-			<main>
-				<slot />
-			</main>
-			<footer class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-500 text-sm">
-				<p>
-					Unofficial archive. All content &copy; <a href="https://cassidoo.co/" class="hover:text-indigo-600" target="_blank" rel="noopener noreferrer">Cassidy Williams</a>.
-				</p>
-			</footer>
-		</div>
-	</body>
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="description" content="Cassidoo's Interview Questions" />
+      <meta name="viewport" content="width=device-width" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      <meta name="generator" content={Astro.generator} />
+      <title>{title}</title>
+   </head>
+   <body class="bg-slate-50 text-slate-900 min-h-screen font-sans">
+      <div class="max-w-3xl mx-auto px-4 py-8">
+         <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-slate-900 mb-2">
+               <a href="/" class="hover:text-indigo-600 transition-colors">
+                  Cassidoo's Interview Questions
+               </a>
+            </h1>
+            <p class="text-slate-600">
+               A collection of weekly interview questions from <a
+                  href="https://cassidoo.co/newsletter/"
+                  class="text-indigo-600 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer">cassidoo's newsletter</a
+               >.
+            </p>
+         </header>
+         <main>
+            <slot />
+         </main>
+         <footer
+            class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-500 text-sm"
+         >
+            <p>
+               Unofficial archive. All content &copy; <a
+                  href="https://cassidoo.co/"
+                  class="hover:text-indigo-600"
+                  target="_blank"
+                  rel="noopener noreferrer">Cassidy Williams</a
+               >.
+            </p>
+         </footer>
+      </div>
+   </body>
 </html>

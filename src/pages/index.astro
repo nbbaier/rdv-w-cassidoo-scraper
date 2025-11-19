@@ -1,53 +1,50 @@
 ---
 import { getCollection } from "astro:content";
+import { Mail, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import YearFilterWithErrorBoundary from "../components/YearFilterWithErrorBoundary";
 import Layout from "../layouts/Layout.astro";
 
 const questions = await getCollection("questions");
 questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const questionsWithExcerpts = questions.map((q) => ({
-	...q,
-	excerpt: q.body
-		.replace(/[#*[\]()]/g, "")
-		.replace(/`/g, "")
-		.slice(0, 150),
+   ...q,
+   excerpt: q.body
+      .replace(/[#*[\]()]/g, "")
+      .replace(/`/g, "")
+      .slice(0, 150),
 }));
 
-// Extract unique years from questions
 const years = [
-	...new Set(questions.map((q) => q.data.date.getFullYear())),
+   ...new Set(questions.map((q) => q.data.date.getFullYear())),
 ].sort((a, b) => b - a);
 ---
 
 <Layout title="Cassidoo's Interview Questions Archive">
    <div class="mb-8 space-y-4">
       <!-- Search and Year Filter -->
-      <div class="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+      <div class="flex gap-2 mx-auto max-w-4xl sm:flex-row">
          <div class="relative flex-1">
-            <input
+            <Search
+               className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
                type="text"
                id="search-input"
                placeholder="Search questions..."
-               class="w-full px-4 py-3 pl-12 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm"
+               className="h-10 px-4 pl-10 rounded-lg border-slate-200 focus-visible:border-indigo-500 focus-visible:ring-indigo-200"
             />
-            <svg
-               class="absolute left-4 top-3.5 h-5 w-5 text-slate-400"
-               xmlns="http://www.w3.org/2000/svg"
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor"
-            >
-               <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
          </div>
-         <select
-            id="year-filter"
-            class="px-4 py-3 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm bg-white"
-         >
+
+         <div id="year-filter-wrapper">
+            <YearFilterWithErrorBoundary
+               client:only="react"
+               years={years}
+               className="h-10! px-4 py-4 rounded-lg border-slate-200 focus-visible:border-indigo-500 focus-visible:ring-indigo-200"
+            />
+         </div>
+         <select id="year-filter" class="hidden">
             <option value="">All Years</option>
             {years.map((year) => <option value={year}>{year}</option>)}
          </select>
@@ -55,61 +52,60 @@ const years = [
 
       <!-- Pagination Controls -->
       <div
-         class="flex flex-col gap-3 max-w-4xl mx-auto bg-white p-4 rounded-lg shadow-sm border border-slate-100"
+         class="flex gap-3 p-4 mx-auto max-w-4xl bg-white rounded-lg border shadow-sm flex- col border-slate-100"
       >
-         <div class="flex items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
+         <div class="flex gap-4 justify-between items-center">
+            <div class="flex gap-2 items-center">
                <label
                   for="page-size"
-                  class="text-sm text-slate-600 hidden sm:inline"
-                  >Show:</label
+                  class="hidden text-sm text-slate-600 sm:inline">Show:</label
                >
                <select
                   id="page-size"
-                  class="px-3 py-2 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm bg-white text-sm"
+                  class="h-9 px-3 py-1 text-sm bg-transparent rounded-md border border-slate-200 shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-indigo-500 focus-visible:ring-indigo-200 focus-visible:ring-[3px]"
                >
                   <option value="10" selected>10</option>
                   <option value="25">25</option>
                   <option value="50">50</option>
                   <option value="100">100</option>
                </select>
-               <span class="text-sm text-slate-600 hidden sm:inline"
+               <span class="hidden text-sm text-slate-600 sm:inline"
                   >per page</span
                >
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex gap-2 items-center">
                <button
                   id="prev-page"
-                  class="px-3 sm:px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  class="px-3 py-2 text-sm rounded-lg border transition-all sm:px-4 border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled
                >
                   <span class="hidden sm:inline">←</span>
                   <span class="sm:hidden">‹</span>
                </button>
-               <div class="flex items-center gap-1.5">
+               <div class="flex gap-1.5 items-center">
                   <input
                      id="page-jump"
                      type="number"
                      min="1"
                      value="1"
-                     class="w-12 sm:w-16 px-1.5 sm:px-2 py-2 text-center rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm text-sm"
+                     class="h-9 w-12 sm:w-16 px-1.5 sm:px-2 py-1 text-sm text-center bg-transparent rounded-md border border-slate-200 shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-indigo-500 focus-visible:ring-indigo-200 focus-visible:ring-[3px]"
                   />
                   <span class="text-sm text-slate-600">/</span>
                   <span class="text-sm text-slate-600" id="total-pages">1</span>
                </div>
                <button
                   id="next-page"
-                  class="px-3 sm:px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  class="px-3 py-2 text-sm rounded-lg border transition-all sm:px-4 border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
                >
                   <span class="hidden sm:inline">→</span>
                   <span class="sm:hidden">›</span>
                </button>
             </div>
 
-            <div class="text-sm text-slate-600 hidden sm:block">
-               <span id="showing-range">1-10</span> of <span id="total-questions"
-                  >0</span
+            <div class="hidden text-sm text-slate-600 sm:block">
+               <span id="showing-range">1-10</span> of <span
+                  id="total-questions">0</span
                >
             </div>
          </div>
@@ -128,13 +124,13 @@ const years = [
          questionsWithExcerpts.map((question) => (
             <a
                href={`/questions/${question.slug}`}
-               class="question-item block bg-white p-6 rounded-lg shadow-sm border border-slate-100 hover:border-indigo-300 hover:shadow-md transition-all group"
+               class="block p-6 bg-white rounded-lg border shadow-sm transition-all question-item border-slate-100 hover:border-indigo-300 hover:shadow-md group"
                data-date={question.data.date.toISOString().split("T")[0]}
                data-number={question.data.number}
                data-year={question.data.date.getFullYear()}
             >
                <div class="flex justify-between items-start mb-2">
-                  <span class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full group-hover:bg-indigo-100 transition-colors">
+                  <span class="px-2 py-0.5 text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-full transition-colors group-hover:bg-indigo-100">
                      #{question.data.number}
                   </span>
                   <time class="text-sm text-slate-400">
@@ -149,7 +145,7 @@ const years = [
       }
    </div>
 
-   <div id="no-results" class="hidden text-center py-12 text-slate-500">
+   <div id="no-results" class="hidden py-12 text-center text-slate-500">
       No questions found matching your search.
    </div>
 </Layout>
@@ -177,9 +173,13 @@ const years = [
    const nextBtn = document.getElementById("next-page");
    const totalPagesSpan = document.getElementById("total-pages");
    const totalQuestionsSpan = document.getElementById("total-questions");
-   const totalQuestionsMobileSpan = document.getElementById("total-questions-mobile");
+   const totalQuestionsMobileSpan = document.getElementById(
+      "total-questions-mobile"
+   );
    const showingRangeSpan = document.getElementById("showing-range");
-   const showingRangeMobileSpan = document.getElementById("showing-range-mobile");
+   const showingRangeMobileSpan = document.getElementById(
+      "showing-range-mobile"
+   );
    const list = document.getElementById("questions-list");
    const noResults = document.getElementById("no-results");
 
