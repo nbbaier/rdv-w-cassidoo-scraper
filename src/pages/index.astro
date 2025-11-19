@@ -55,55 +55,70 @@ const years = [
 
       <!-- Pagination Controls -->
       <div
-         class="flex flex-col sm:flex-row gap-4 items-center justify-between max-w-4xl mx-auto bg-white p-4 rounded-lg shadow-sm border border-slate-100"
+         class="flex flex-col gap-3 max-w-4xl mx-auto bg-white p-4 rounded-lg shadow-sm border border-slate-100"
       >
-         <div class="flex items-center gap-2">
-            <label for="page-size" class="text-sm text-slate-600">Show:</label>
-            <select
-               id="page-size"
-               class="px-3 py-2 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm bg-white text-sm"
-            >
-               <option value="10" selected>10</option>
-               <option value="25">25</option>
-               <option value="50">50</option>
-               <option value="100">100</option>
-            </select>
-            <span class="text-sm text-slate-600">per page</span>
-         </div>
-
-         <div class="flex items-center gap-2">
-            <button
-               id="prev-page"
-               class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-               disabled
-            >
-               ← Previous
-            </button>
+         <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-               <span class="text-sm text-slate-600">Page</span>
-               <input
-                  id="page-jump"
-                  type="number"
-                  min="1"
-                  value="1"
-                  class="w-16 px-2 py-2 text-center rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm text-sm"
-               />
-               <span class="text-sm text-slate-600"
-                  >of <span id="total-pages">1</span></span
+               <label
+                  for="page-size"
+                  class="text-sm text-slate-600 hidden sm:inline"
+                  >Show:</label
+               >
+               <select
+                  id="page-size"
+                  class="px-3 py-2 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm bg-white text-sm"
+               >
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+               </select>
+               <span class="text-sm text-slate-600 hidden sm:inline"
+                  >per page</span
                >
             </div>
-            <button
-               id="next-page"
-               class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-               Next →
-            </button>
+
+            <div class="flex items-center gap-2">
+               <button
+                  id="prev-page"
+                  class="px-3 sm:px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  disabled
+               >
+                  <span class="hidden sm:inline">←</span>
+                  <span class="sm:hidden">‹</span>
+               </button>
+               <div class="flex items-center gap-1.5">
+                  <input
+                     id="page-jump"
+                     type="number"
+                     min="1"
+                     value="1"
+                     class="w-12 sm:w-16 px-1.5 sm:px-2 py-2 text-center rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm text-sm"
+                  />
+                  <span class="text-sm text-slate-600">/</span>
+                  <span class="text-sm text-slate-600" id="total-pages">1</span>
+               </div>
+               <button
+                  id="next-page"
+                  class="px-3 sm:px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+               >
+                  <span class="hidden sm:inline">→</span>
+                  <span class="sm:hidden">›</span>
+               </button>
+            </div>
+
+            <div class="text-sm text-slate-600 hidden sm:block">
+               <span id="showing-range">1-10</span> of <span id="total-questions"
+                  >0</span
+               >
+            </div>
          </div>
 
-         <div class="text-sm text-slate-600">
-            <span id="showing-range">1-10</span> of <span id="total-questions"
-               >0</span
-            >
+         <!-- Mobile-only total count -->
+         <div class="text-xs text-center text-slate-500 sm:hidden">
+            <span id="showing-range-mobile">1-10</span> of <span
+               id="total-questions-mobile">0</span
+            > questions
          </div>
       </div>
    </div>
@@ -162,7 +177,9 @@ const years = [
    const nextBtn = document.getElementById("next-page");
    const totalPagesSpan = document.getElementById("total-pages");
    const totalQuestionsSpan = document.getElementById("total-questions");
+   const totalQuestionsMobileSpan = document.getElementById("total-questions-mobile");
    const showingRangeSpan = document.getElementById("showing-range");
+   const showingRangeMobileSpan = document.getElementById("showing-range-mobile");
    const list = document.getElementById("questions-list");
    const noResults = document.getElementById("no-results");
 
@@ -233,6 +250,8 @@ const years = [
       // Update UI
       if (totalQuestionsSpan)
          totalQuestionsSpan.textContent = String(totalItems);
+      if (totalQuestionsMobileSpan)
+         totalQuestionsMobileSpan.textContent = String(totalItems);
       if (totalPagesSpan)
          totalPagesSpan.textContent = String(Math.max(totalPages, 1));
       if (pageJumpInput)
@@ -242,12 +261,12 @@ const years = [
       const startIdx = (currentPage - 1) * pageSize;
       const endIdx = Math.min(startIdx + pageSize, totalItems);
 
+      const rangeText = totalItems === 0 ? "0-0" : `${startIdx + 1}-${endIdx}`;
       if (showingRangeSpan) {
-         if (totalItems === 0) {
-            showingRangeSpan.textContent = "0-0";
-         } else {
-            showingRangeSpan.textContent = `${startIdx + 1}-${endIdx}`;
-         }
+         showingRangeSpan.textContent = rangeText;
+      }
+      if (showingRangeMobileSpan) {
+         showingRangeMobileSpan.textContent = rangeText;
       }
 
       // Show/hide items
