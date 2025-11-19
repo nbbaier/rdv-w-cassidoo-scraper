@@ -86,6 +86,9 @@ export default function QuestionsList({
 			}
 		}
 
+		// Reset to page 1 when filters change
+		setCurrentPage(1);
+
 		return filtered;
 	}, [questions, selectedYear, searchTerm, searchIndex]);
 
@@ -97,11 +100,6 @@ export default function QuestionsList({
 
 	const showingRange =
 		filteredQuestions.length === 0 ? "0-0" : `${startIdx + 1}-${endIdx}`;
-
-	// Reset to page 1 when filters change
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [searchTerm, selectedYear]);
 
 	// Ensure current page is valid
 	useEffect(() => {
