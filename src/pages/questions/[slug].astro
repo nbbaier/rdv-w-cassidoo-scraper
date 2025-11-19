@@ -3,21 +3,21 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
-   const questions = await getCollection("questions");
-   return questions.map((question) => ({
-      params: { slug: question.slug },
-      props: { question },
-   }));
+	const questions = await getCollection("questions");
+	return questions.map((question) => ({
+		params: { slug: question.slug },
+		props: { question },
+	}));
 }
 
 const { question } = Astro.props;
 const { Content } = await question.render();
 
 const date = new Date(question.data.date).toLocaleDateString("en-US", {
-   weekday: "long",
-   year: "numeric",
-   month: "long",
-   day: "numeric",
+	weekday: "long",
+	year: "numeric",
+	month: "long",
+	day: "numeric",
 });
 ---
 

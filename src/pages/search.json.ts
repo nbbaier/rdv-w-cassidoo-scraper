@@ -9,12 +9,11 @@ export async function GET() {
 			date: question.data.date.toISOString().split("T")[0],
 			number: question.data.number,
 			// Create a simple excerpt by removing markdown syntax and taking the first 200 chars
-			excerpt:
-				question.body
-					.replace(/[#*`[\]()]/g, "") // Remove basic markdown chars
-					.replace(/\n+/g, " ") // Replace newlines with spaces
-					.trim()
-					.substring(0, 200) + "...",
+			excerpt: `${question.body
+				.replace(/[#*`[\]()]/g, "") // Remove basic markdown chars
+				.replace(/\n+/g, " ") // Replace newlines with spaces
+				.trim()
+				.substring(0, 200)}...`,
 		};
 	});
 
