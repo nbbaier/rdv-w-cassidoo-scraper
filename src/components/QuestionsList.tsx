@@ -101,7 +101,7 @@ export default function QuestionsList({
 	// Reset to page 1 when filters change
 	useEffect(() => {
 		setCurrentPage(1);
-	}, []);
+	}, [searchTerm, selectedYear]);
 
 	// Ensure current page is valid
 	useEffect(() => {
