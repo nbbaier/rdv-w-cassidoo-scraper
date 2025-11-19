@@ -39,6 +39,7 @@
 		"remark-frontmatter": "^5.0.0",
 		"remark-stringify": "^11.0.0",
 		"remark-unlink": "^5.0.0",
+		"tailwind-merge": "^3.4.0",
 		"tailwindcss": "^4.1.17",
 		"to-vfile": "^8.0.0",
 		"unified": "^11.0.5"

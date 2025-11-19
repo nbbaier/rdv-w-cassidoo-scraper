@@ -1,4 +1,6 @@
 ---
+import { cn } from "@/lib/utils";
+
 interface Props {
 	variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 	size?: 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm' | 'icon-lg';
@@ -42,7 +44,7 @@ const sizeClasses = {
 	"icon-lg": "size-10"
 };
 
-const classes = [baseClasses, variantClasses[variant], sizeClasses[size], className].filter(Boolean).join(' ');
+const classes = cn(baseClasses, variantClasses[variant], sizeClasses[size], className);
 
 const Tag = href ? 'a' : 'button';
 

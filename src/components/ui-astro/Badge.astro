@@ -1,4 +1,6 @@
 ---
+import { cn } from "@/lib/utils";
+
 interface Props {
 	variant?: 'default' | 'secondary' | 'destructive' | 'outline';
 	class?: string;
@@ -18,7 +20,7 @@ const variantClasses = {
 	outline: "text-foreground"
 };
 
-const classes = [baseClasses, variantClasses[variant], className].filter(Boolean).join(' ');
+const classes = cn(baseClasses, variantClasses[variant], className);
 ---
 
 <div class={classes} {...rest}>
