@@ -1,4 +1,6 @@
 ---
+import { Icon } from "astro-icon/components";
+
 interface Question {
   slug: string;
   number: number;
@@ -45,32 +47,51 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
         type="text"
         id="search-input"
         placeholder="Search questions..."
-        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-10 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-background"
+        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-10 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-white"
       />
     </div>
 
     <div class="relative w-[180px]">
-      <select
-        id="year-select"
-        class="flex h-10 w-full items-center justify-between gap-2 whitespace-nowrap rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 appearance-none"
-      >
-        <option value="">All Years</option>
-        {years.map((year) => <option value={year}>{year}</option>)}
-      </select>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="lucide lucide-chevron-down h-4 w-4 opacity-50 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-      >
-        <path d="m6 9 6 6 6-6"></path>
-      </svg>
+      <div class="relative custom-select">
+        <button
+          type="button"
+          id="year-select-trigger"
+          class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+        >
+          <span class="value">All Years</span>
+          <Icon name="lucide:chevron-down" class="h-4 w-4 opacity-50" />
+        </button>
+        <div
+          id="year-select-dropdown"
+          class="custom-select-dropdown hidden absolute top-full mt-1 z-50 w-full min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80"
+        >
+          <div class="max-h-[300px] overflow-y-auto p-1">
+            <div
+              class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+              data-value=""
+            >
+              <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                <Icon name="lucide:check" class="h-4 w-4 check-icon" />
+              </span>
+              All Years
+            </div>
+            {
+              years.map((year) => (
+                <div
+                  class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                  data-value={year}
+                >
+                  <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                    <Icon name="lucide:check" class="h-4 w-4 check-icon opacity-0" />
+                  </span>
+                  {year}
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <input type="hidden" id="year-select" value="" />
+      </div>
     </div>
   </div>
 
@@ -83,30 +104,34 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
         <label for="page-size-select" class="hidden text-sm text-slate-600 sm:inline">
           Show:
         </label>
-        <div class="relative">
-            <select
-            id="page-size-select"
-            class="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 appearance-none pr-8"
+        <div class="relative custom-select min-w-[70px]">
+            <button
+              type="button"
+              id="page-size-trigger"
+              class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 gap-2"
             >
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            </select>
-             <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-chevron-down h-4 w-4 opacity-50 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
+              <span class="value">10</span>
+              <Icon name="lucide:chevron-down" class="h-4 w-4 opacity-50" />
+            </button>
+            <div
+              id="page-size-dropdown"
+              class="custom-select-dropdown hidden absolute top-full mt-1 z-50 w-full min-w-[4rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80"
             >
-                <path d="m6 9 6 6 6-6"></path>
-            </svg>
+              <div class="max-h-[300px] overflow-y-auto p-1">
+                {[10, 25, 50, 100].map((size) => (
+                    <div
+                      class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                      data-value={size}
+                    >
+                      <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                        <Icon name="lucide:check" class={`h-4 w-4 check-icon ${size === 10 ? '' : 'opacity-0'}`} />
+                      </span>
+                      {size}
+                    </div>
+                ))}
+              </div>
+            </div>
+            <input type="hidden" id="page-size-select" value="10" />
         </div>
         <span class="hidden text-sm text-slate-600 sm:inline"> per page </span>
       </div>
@@ -204,7 +229,7 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
     </div>
 </div>
 
-<script define:vars={{ questions, initialPageSize }}>
+<script is:inline define:vars={{ questions, initialPageSize }}>
   let allQuestions = questions;
   let filteredQuestions = [...allQuestions];
   let currentPage = 1;
@@ -215,8 +240,8 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
 
   // DOM Elements
   const searchInput = document.getElementById("search-input");
-  const yearSelect = document.getElementById("year-select");
-  const pageSizeSelect = document.getElementById("page-size-select");
+  const yearSelectInput = document.getElementById("year-select");
+  const pageSizeSelectInput = document.getElementById("page-size-select");
   const prevPageBtn = document.getElementById("prev-page-btn");
   const nextPageBtn = document.getElementById("next-page-btn");
   const pageInput = document.getElementById("page-input");
@@ -225,6 +250,86 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   const showingRangeMobileEl = document.getElementById("showing-range-mobile");
   const questionsListEl = document.getElementById("questions-list");
   const noResultsEl = document.getElementById("no-results");
+
+  // Custom Select Logic
+  function setupCustomSelect(triggerId, dropdownId, inputId, onSelect) {
+    const trigger = document.getElementById(triggerId);
+    const dropdown = document.getElementById(dropdownId);
+    const input = document.getElementById(inputId);
+    const options = dropdown.querySelectorAll('.option-item');
+
+    if (!trigger || !dropdown || !input) return;
+
+    // Toggle Dropdown
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = dropdown.classList.contains('hidden');
+        // Close all other dropdowns
+        document.querySelectorAll('.custom-select-dropdown').forEach(el => {
+            if (el.id !== dropdownId) el.classList.add('hidden');
+        });
+        
+        if (isHidden) {
+            dropdown.classList.remove('hidden');
+        } else {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    // Option Click
+    options.forEach(option => {
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const value = option.dataset.value;
+            const label = option.textContent.trim();
+
+            // Update Input
+            input.value = value;
+
+            // Update Trigger Label
+            const valueSpan = trigger.querySelector('.value');
+            if (valueSpan) valueSpan.textContent = label;
+
+            // Update Checkmarks
+            options.forEach(opt => {
+                const check = opt.querySelector('.check-icon');
+                if (check) {
+                    if (opt === option) {
+                        check.classList.remove('opacity-0');
+                    } else {
+                        check.classList.add('opacity-0');
+                    }
+                }
+            });
+
+            // Close Dropdown
+            dropdown.classList.add('hidden');
+
+            // Trigger Callback
+            if (onSelect) onSelect(value);
+        });
+    });
+
+    // Close on Click Outside
+    document.addEventListener('click', (e) => {
+        if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+  }
+
+  // Initialize Custom Selects
+  setupCustomSelect('year-select-trigger', 'year-select-dropdown', 'year-select', (val) => {
+      selectedYear = val;
+      currentPage = 1;
+      filterQuestions();
+  });
+
+  setupCustomSelect('page-size-trigger', 'page-size-dropdown', 'page-size-select', (val) => {
+      pageSize = parseInt(val, 10);
+      currentPage = 1;
+      renderQuestions();
+  });
 
   // Load search index
   fetch("/search.json")
@@ -329,13 +434,6 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
         currentPage = 1;
     }
     
-    // Always reset to page 1 on filter change? React app did:
-    // setCurrentPage(1); when filters change.
-    // But we need to be careful not to reset if we just loaded (but here filter is called on input)
-    // Let's track if filters changed vs page change.
-    // For now, simplistic approach: if filtering triggered this, reset page to 1.
-    // I'll separate the reset logic into event handlers.
-    
     renderQuestions();
   }
 
@@ -344,18 +442,6 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
     searchTerm = e.target.value;
     currentPage = 1;
     filterQuestions();
-  });
-
-  yearSelect.addEventListener("change", (e) => {
-    selectedYear = e.target.value;
-    currentPage = 1;
-    filterQuestions();
-  });
-
-  pageSizeSelect.addEventListener("change", (e) => {
-    pageSize = parseInt(e.target.value, 10);
-    currentPage = 1;
-    renderQuestions();
   });
 
   prevPageBtn.addEventListener("click", () => {
