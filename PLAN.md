@@ -48,7 +48,7 @@ Build a static frontend using Astro to browse interview questions, hosted on Clo
 
 ## 6. CI/CD (GitHub Actions & Cloudflare)
 
-- [ ] **GitHub Action**: Create `.github/workflows/weekly-scrape.yml`.
+- [x] **GitHub Action**: Create `.github/workflows/weekly-scrape.yml`.
    - **Schedule**: Weekly (e.g., Monday 3am UTC).
    - **Steps**:
       - Checkout repo.
@@ -59,3 +59,4 @@ Build a static frontend using Astro to browse interview questions, hosted on Clo
    - Connect the repository.
    - Build command: `npm run build` (or `bun run build`).
    - Output directory: `dist/`.
+   - **Note**: This is a manual configuration step to be done in the Cloudflare dashboard.
