@@ -1,49 +1,49 @@
 name: Weekly Scrape
 
 on:
-  schedule:
-    # Run every Monday at 3:00 AM UTC
-    - cron: '0 3 * * 1'
-  workflow_dispatch: # Allow manual triggering
+   schedule:
+      # Run every Monday at 3:00 AM UTC
+      - cron: "0 3 * * 1"
+   workflow_dispatch: # Allow manual triggering
 
 jobs:
-  scrape-and-update:
-    runs-on: ubuntu-latest
+   scrape-and-update:
+      runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
+      permissions:
+         contents: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      steps:
+         - name: Checkout repository
+           uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+         - name: Setup Bun
+           uses: oven-sh/setup-bun@v2
+           with:
+              bun-version: latest
 
-      - name: Install dependencies
-        run: bun install
+         - name: Install dependencies
+           run: bun install
 
-      - name: Create scraper data directory
-        run: mkdir -p scraper/data/html
+         - name: Create scraper data directory
+           run: mkdir -p scraper/data/html
 
-      - name: Run scraper
-        run: bun run scrape
+         - name: Run scraper
+           run: bun run scrape
 
-      - name: Generate markdown files
-        run: bun run generate
+         - name: Generate markdown files
+           run: bun run generate
 
-      - name: Check for changes
-        id: git-check
-        run: |
-          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+         - name: Check for changes
+           id: git-check
+           run: |
+              git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
 
-      - name: Commit and push changes
-        if: steps.git-check.outputs.changes == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add src/content/questions/*.md
-          git commit -m "Add new interview questions [skip ci]"
-          git push
+         - name: Commit and push changes
+           if: steps.git-check.outputs.changes == 'true'
+           run: |
+              git config --local user.email "github-actions[bot]@users.noreply.github.com"
+              git config --local user.name "github-actions[bot]"
+              git add src/content/questions/*.md
+              git commit -m "Add new interview questions [skip ci]"
+              git push

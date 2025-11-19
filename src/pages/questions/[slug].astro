@@ -20,10 +20,10 @@ const { question, prevQuestion, nextQuestion } = Astro.props;
 const { Content } = await question.render();
 
 const date = new Date(question.data.date).toLocaleDateString("en-US", {
-   weekday: "long",
-   year: "numeric",
-   month: "long",
-   day: "numeric",
+	weekday: "long",
+	year: "numeric",
+	month: "long",
+	day: "numeric",
 });
 ---
 
