@@ -14,7 +14,9 @@ const questionsWithExcerpts = questions.map((q) => ({
 }));
 
 // Extract unique years from questions
-const years = [...new Set(questions.map(q => q.data.date.getFullYear()))].sort((a, b) => b - a);
+const years = [
+	...new Set(questions.map((q) => q.data.date.getFullYear())),
+].sort((a, b) => b - a);
 ---
 
 <Layout title="Cassidoo's Interview Questions Archive">
@@ -47,12 +49,14 @@ const years = [...new Set(questions.map(q => q.data.date.getFullYear()))].sort((
             class="px-4 py-3 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm bg-white"
          >
             <option value="">All Years</option>
-            {years.map(year => <option value={year}>{year}</option>)}
+            {years.map((year) => <option value={year}>{year}</option>)}
          </select>
       </div>
 
       <!-- Pagination Controls -->
-      <div class="flex flex-col sm:flex-row gap-4 items-center justify-between max-w-4xl mx-auto bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+      <div
+         class="flex flex-col sm:flex-row gap-4 items-center justify-between max-w-4xl mx-auto bg-white p-4 rounded-lg shadow-sm border border-slate-100"
+      >
          <div class="flex items-center gap-2">
             <label for="page-size" class="text-sm text-slate-600">Show:</label>
             <select
@@ -84,7 +88,9 @@ const years = [...new Set(questions.map(q => q.data.date.getFullYear()))].sort((
                   value="1"
                   class="w-16 px-2 py-2 text-center rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm text-sm"
                />
-               <span class="text-sm text-slate-600">of <span id="total-pages">1</span></span>
+               <span class="text-sm text-slate-600"
+                  >of <span id="total-pages">1</span></span
+               >
             </div>
             <button
                id="next-page"
@@ -95,7 +101,9 @@ const years = [...new Set(questions.map(q => q.data.date.getFullYear()))].sort((
          </div>
 
          <div class="text-sm text-slate-600">
-            <span id="showing-range">1-10</span> of <span id="total-questions">0</span>
+            <span id="showing-range">1-10</span> of <span id="total-questions"
+               >0</span
+            >
          </div>
       </div>
    </div>
@@ -159,7 +167,8 @@ const years = [...new Set(questions.map(q => q.data.date.getFullYear()))].sort((
    const noResults = document.getElementById("no-results");
 
    function filterAndPaginate() {
-      const searchTerm = (searchInput as HTMLInputElement)?.value.toLowerCase() || "";
+      const searchTerm =
+         (searchInput as HTMLInputElement)?.value.toLowerCase() || "";
       const selectedYear = (yearFilter as HTMLSelectElement)?.value || "";
       const items = Array.from(document.querySelectorAll(".question-item"));
 
@@ -222,9 +231,12 @@ const years = [...new Set(questions.map(q => q.data.date.getFullYear()))].sort((
       }
 
       // Update UI
-      if (totalQuestionsSpan) totalQuestionsSpan.textContent = String(totalItems);
-      if (totalPagesSpan) totalPagesSpan.textContent = String(Math.max(totalPages, 1));
-      if (pageJumpInput) (pageJumpInput as HTMLInputElement).value = String(currentPage);
+      if (totalQuestionsSpan)
+         totalQuestionsSpan.textContent = String(totalItems);
+      if (totalPagesSpan)
+         totalPagesSpan.textContent = String(Math.max(totalPages, 1));
+      if (pageJumpInput)
+         (pageJumpInput as HTMLInputElement).value = String(currentPage);
 
       // Calculate range
       const startIdx = (currentPage - 1) * pageSize;
@@ -254,7 +266,8 @@ const years = [...new Set(questions.map(q => q.data.date.getFullYear()))].sort((
          (prevBtn as HTMLButtonElement).disabled = currentPage === 1;
       }
       if (nextBtn) {
-         (nextBtn as HTMLButtonElement).disabled = currentPage === totalPages || totalPages === 0;
+         (nextBtn as HTMLButtonElement).disabled =
+            currentPage === totalPages || totalPages === 0;
       }
 
       // Show/hide no results

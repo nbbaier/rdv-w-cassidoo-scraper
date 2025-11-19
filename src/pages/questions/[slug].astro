@@ -3,17 +3,17 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
-   const questions = await getCollection("questions");
-   questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+	const questions = await getCollection("questions");
+	questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-   return questions.map((question, index) => ({
-      params: { slug: question.slug },
-      props: {
-         question,
-         prevQuestion: index > 0 ? questions[index - 1] : null,
-         nextQuestion: index < questions.length - 1 ? questions[index + 1] : null,
-      },
-   }));
+	return questions.map((question, index) => ({
+		params: { slug: question.slug },
+		props: {
+			question,
+			prevQuestion: index > 0 ? questions[index - 1] : null,
+			nextQuestion: index < questions.length - 1 ? questions[index + 1] : null,
+		},
+	}));
 }
 
 const { question, prevQuestion, nextQuestion } = Astro.props;
