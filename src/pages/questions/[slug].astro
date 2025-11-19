@@ -1,9 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Icon } from "astro-icon/components";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -35,58 +32,52 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
 <Layout
    title={`Question #${question.data.number} - Cassidoo's Interview Questions`}
 >
-   <Card className="prose prose-slate max-w-none">
-      <CardContent className="p-8">
+   <div class="rounded-xl border bg-card text-card-foreground shadow prose prose-slate max-w-none">
+      <div class="p-8">
          <div
             class="grid grid-cols-3 items-center mb-6 not-prose pb-6 border-b border-slate-100"
          >
             <div class="justify-self-start">
                {
                   prevQuestion && (
-                     <Button variant="ghost" asChild>
                         <a
                            href={`/questions/${prevQuestion.slug}`}
-                           class="flex items-center gap-2"
+                           class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex items-center gap-2"
                         >
-                           <ChevronLeft className="size-4" />
+                           <Icon name="lucide:chevron-left" class="size-4" />
                            <span class="text-sm text-muted-foreground">
                               #{prevQuestion.data.number}
                            </span>
                         </a>
-                     </Button>
                   )
                }
             </div>
             <div class="justify-self-center">
-               <Button variant="ghost" size="sm" asChild>
-                  <a href="/">All questions</a>
-               </Button>
+                  <a href="/" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3">All questions</a>
             </div>
             <div class="justify-self-end">
                {
                   nextQuestion && (
-                     <Button variant="ghost" asChild>
                         <a
                            href={`/questions/${nextQuestion.slug}`}
-                           class="flex items-center gap-2"
+                           class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex items-center gap-2"
                         >
                            <span class="text-sm text-muted-foreground">
                               #{nextQuestion.data.number}
                            </span>
-                           <ChevronRight className="size-4" />
+                           <Icon name="lucide:chevron-right" class="size-4" />
                         </a>
-                     </Button>
                   )
                }
             </div>
          </div>
 
          <div class="flex items-center justify-between mb-6 not-prose">
-            <Badge
-               className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-transparent text-sm font-semibold px-3 py-1"
+            <span
+               class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-transparent"
             >
                #{question.data.number}
-            </Badge>
+            </span>
             <time class="text-sm text-slate-500">{date}</time>
          </div>
 
@@ -97,22 +88,19 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
          <div class="mt-8 pt-6 border-t border-slate-100 not-prose">
             <!-- Bottom links -->
             <div class="flex justify-between items-center">
-               <Button variant="link" asChild>
-                  <a href="/">← Back to all questions</a>
-               </Button>
-               <Button variant="ghost" size="sm" asChild>
+                  <a href="/" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-10 px-4 py-2">← Back to all questions</a>
                   <a
                      href={question.data.url}
                      target="_blank"
                      rel="noopener noreferrer"
+                     class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3"
                   >
                      View original newsletter ↗
                   </a>
-               </Button>
             </div>
          </div>
-      </CardContent>
-   </Card>
+      </div>
+   </div>
 </Layout>
 
 <style is:global>
