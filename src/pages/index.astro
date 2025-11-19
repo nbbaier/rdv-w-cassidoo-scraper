@@ -12,30 +12,114 @@ const questionsWithExcerpts = questions.map((q) => ({
 		.replace(/`/g, "")
 		.slice(0, 150),
 }));
+
+// Extract unique years from questions
+const years = [
+	...new Set(questions.map((q) => q.data.date.getFullYear())),
+].sort((a, b) => b - a);
 ---
 
 <Layout title="Cassidoo's Interview Questions Archive">
-   <div class="mb-8">
-      <div class="relative max-w-lg mx-auto">
-         <input
-            type="text"
-            id="search-input"
-            placeholder="Search questions..."
-            class="w-full px-4 py-3 pl-12 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm"
-         />
-         <svg
-            class="absolute left-4 top-3.5 h-5 w-5 text-slate-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+   <div class="mb-8 space-y-4">
+      <!-- Search and Year Filter -->
+      <div class="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+         <div class="relative flex-1">
+            <input
+               type="text"
+               id="search-input"
+               placeholder="Search questions..."
+               class="w-full px-4 py-3 pl-12 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm"
+            />
+            <svg
+               class="absolute left-4 top-3.5 h-5 w-5 text-slate-400"
+               xmlns="http://www.w3.org/2000/svg"
+               fill="none"
+               viewBox="0 0 24 24"
+               stroke="currentColor"
+            >
+               <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+         </div>
+         <select
+            id="year-filter"
+            class="px-4 py-3 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm bg-white"
          >
-            <path
-               stroke-linecap="round"
-               stroke-linejoin="round"
-               stroke-width="2"
-               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-         </svg>
+            <option value="">All Years</option>
+            {years.map((year) => <option value={year}>{year}</option>)}
+         </select>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div
+         class="flex flex-col gap-3 max-w-4xl mx-auto bg-white p-4 rounded-lg shadow-sm border border-slate-100"
+      >
+         <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+               <label
+                  for="page-size"
+                  class="text-sm text-slate-600 hidden sm:inline"
+                  >Show:</label
+               >
+               <select
+                  id="page-size"
+                  class="px-3 py-2 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm bg-white text-sm"
+               >
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+               </select>
+               <span class="text-sm text-slate-600 hidden sm:inline"
+                  >per page</span
+               >
+            </div>
+
+            <div class="flex items-center gap-2">
+               <button
+                  id="prev-page"
+                  class="px-3 sm:px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  disabled
+               >
+                  <span class="hidden sm:inline">←</span>
+                  <span class="sm:hidden">‹</span>
+               </button>
+               <div class="flex items-center gap-1.5">
+                  <input
+                     id="page-jump"
+                     type="number"
+                     min="1"
+                     value="1"
+                     class="w-12 sm:w-16 px-1.5 sm:px-2 py-2 text-center rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all shadow-sm text-sm"
+                  />
+                  <span class="text-sm text-slate-600">/</span>
+                  <span class="text-sm text-slate-600" id="total-pages">1</span>
+               </div>
+               <button
+                  id="next-page"
+                  class="px-3 sm:px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+               >
+                  <span class="hidden sm:inline">→</span>
+                  <span class="sm:hidden">›</span>
+               </button>
+            </div>
+
+            <div class="text-sm text-slate-600 hidden sm:block">
+               <span id="showing-range">1-10</span> of <span id="total-questions"
+                  >0</span
+               >
+            </div>
+         </div>
+
+         <!-- Mobile-only total count -->
+         <div class="text-xs text-center text-slate-500 sm:hidden">
+            <span id="showing-range-mobile">1-10</span> of <span
+               id="total-questions-mobile">0</span
+            > questions
+         </div>
       </div>
    </div>
 
@@ -47,6 +131,7 @@ const questionsWithExcerpts = questions.map((q) => ({
                class="question-item block bg-white p-6 rounded-lg shadow-sm border border-slate-100 hover:border-indigo-300 hover:shadow-md transition-all group"
                data-date={question.data.date.toISOString().split("T")[0]}
                data-number={question.data.number}
+               data-year={question.data.date.getFullYear()}
             >
                <div class="flex justify-between items-start mb-2">
                   <span class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full group-hover:bg-indigo-100 transition-colors">
@@ -71,6 +156,9 @@ const questionsWithExcerpts = questions.map((q) => ({
 
 <script>
    let searchIndex: any[] = [];
+   let currentPage = 1;
+   let pageSize = 10;
+   let filteredItems: HTMLElement[] = [];
 
    (async function () {
       try {
@@ -82,65 +170,196 @@ const questionsWithExcerpts = questions.map((q) => ({
    })();
 
    const searchInput = document.getElementById("search-input");
+   const yearFilter = document.getElementById("year-filter");
+   const pageSizeSelect = document.getElementById("page-size");
+   const pageJumpInput = document.getElementById("page-jump");
+   const prevBtn = document.getElementById("prev-page");
+   const nextBtn = document.getElementById("next-page");
+   const totalPagesSpan = document.getElementById("total-pages");
+   const totalQuestionsSpan = document.getElementById("total-questions");
+   const totalQuestionsMobileSpan = document.getElementById("total-questions-mobile");
+   const showingRangeSpan = document.getElementById("showing-range");
+   const showingRangeMobileSpan = document.getElementById("showing-range-mobile");
    const list = document.getElementById("questions-list");
    const noResults = document.getElementById("no-results");
 
-   if (searchInput && list && noResults) {
-      searchInput.addEventListener("input", (e) => {
-         const input = e.target;
-         if (!(input instanceof HTMLInputElement)) return;
+   function filterAndPaginate() {
+      const searchTerm =
+         (searchInput as HTMLInputElement)?.value.toLowerCase() || "";
+      const selectedYear = (yearFilter as HTMLSelectElement)?.value || "";
+      const items = Array.from(document.querySelectorAll(".question-item"));
 
-         const term = input.value.toLowerCase();
-         const items = document.querySelectorAll(".question-item");
-         let hasVisible = false;
-
-         const matchingSlugs = new Set<string>();
-         if (term.length > 0 && searchIndex.length > 0) {
-            for (const item of searchIndex) {
-               if (
-                  item.excerpt.toLowerCase().includes(term) ||
-                  item.date.includes(term) ||
-                  String(item.number).includes(term) ||
-                  item.slug.includes(term)
-               ) {
-                  matchingSlugs.add(item.slug);
-               }
+      // Build matching slugs from search index
+      const matchingSlugs = new Set<string>();
+      if (searchTerm.length > 0 && searchIndex.length > 0) {
+         for (const item of searchIndex) {
+            if (
+               item.excerpt.toLowerCase().includes(searchTerm) ||
+               item.date.includes(searchTerm) ||
+               String(item.number).includes(searchTerm) ||
+               item.slug.includes(searchTerm)
+            ) {
+               matchingSlugs.add(item.slug);
             }
          }
+      }
 
-         for (const item of items) {
-            if (!(item instanceof HTMLElement)) continue;
+      // Filter items
+      filteredItems = items.filter((item) => {
+         if (!(item instanceof HTMLElement)) return false;
 
-            const date = item.dataset.date || "";
-            const number = item.dataset.number || "";
-            const href = item.getAttribute("href") || "";
-            const slug = href.split("/").pop() || "";
+         const date = item.dataset.date || "";
+         const number = item.dataset.number || "";
+         const year = item.dataset.year || "";
+         const href = item.getAttribute("href") || "";
+         const slug = href.split("/").pop() || "";
 
-            let matchesTerm = false;
-            if (term === "") {
-               matchesTerm = true;
-            } else if (searchIndex.length > 0) {
-               matchesTerm = matchingSlugs.has(slug);
-            } else {
-               matchesTerm =
-                  date.includes(term) ||
-                  number.includes(term) ||
-                  (item.textContent || "").toLowerCase().includes(term);
-            }
-
-            if (matchesTerm) {
-               item.style.display = "block";
-               hasVisible = true;
-            } else {
-               item.style.display = "none";
-            }
+         // Check year filter
+         if (selectedYear && year !== selectedYear) {
+            return false;
          }
 
-         if (hasVisible) {
-            noResults.classList.add("hidden");
+         // Check search term
+         let matchesTerm = false;
+         if (searchTerm === "") {
+            matchesTerm = true;
+         } else if (searchIndex.length > 0) {
+            matchesTerm = matchingSlugs.has(slug);
          } else {
+            matchesTerm =
+               date.includes(searchTerm) ||
+               number.includes(searchTerm) ||
+               (item.textContent || "").toLowerCase().includes(searchTerm);
+         }
+
+         return matchesTerm;
+      }) as HTMLElement[];
+
+      // Calculate pagination
+      const totalItems = filteredItems.length;
+      const totalPages = Math.ceil(totalItems / pageSize);
+
+      // Ensure current page is valid
+      if (currentPage > totalPages && totalPages > 0) {
+         currentPage = totalPages;
+      }
+      if (currentPage < 1) {
+         currentPage = 1;
+      }
+
+      // Update UI
+      if (totalQuestionsSpan)
+         totalQuestionsSpan.textContent = String(totalItems);
+      if (totalQuestionsMobileSpan)
+         totalQuestionsMobileSpan.textContent = String(totalItems);
+      if (totalPagesSpan)
+         totalPagesSpan.textContent = String(Math.max(totalPages, 1));
+      if (pageJumpInput)
+         (pageJumpInput as HTMLInputElement).value = String(currentPage);
+
+      // Calculate range
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = Math.min(startIdx + pageSize, totalItems);
+
+      const rangeText = totalItems === 0 ? "0-0" : `${startIdx + 1}-${endIdx}`;
+      if (showingRangeSpan) {
+         showingRangeSpan.textContent = rangeText;
+      }
+      if (showingRangeMobileSpan) {
+         showingRangeMobileSpan.textContent = rangeText;
+      }
+
+      // Show/hide items
+      items.forEach((item) => {
+         if (item instanceof HTMLElement) {
+            item.style.display = "none";
+         }
+      });
+
+      for (let i = startIdx; i < endIdx; i++) {
+         filteredItems[i].style.display = "block";
+      }
+
+      // Update buttons
+      if (prevBtn) {
+         (prevBtn as HTMLButtonElement).disabled = currentPage === 1;
+      }
+      if (nextBtn) {
+         (nextBtn as HTMLButtonElement).disabled =
+            currentPage === totalPages || totalPages === 0;
+      }
+
+      // Show/hide no results
+      if (noResults && list) {
+         if (totalItems === 0) {
             noResults.classList.remove("hidden");
+         } else {
+            noResults.classList.add("hidden");
+         }
+      }
+   }
+
+   // Event listeners
+   if (searchInput) {
+      searchInput.addEventListener("input", () => {
+         currentPage = 1;
+         filterAndPaginate();
+      });
+   }
+
+   if (yearFilter) {
+      yearFilter.addEventListener("change", () => {
+         currentPage = 1;
+         filterAndPaginate();
+      });
+   }
+
+   if (pageSizeSelect) {
+      pageSizeSelect.addEventListener("change", (e) => {
+         const select = e.target as HTMLSelectElement;
+         pageSize = parseInt(select.value, 10);
+         currentPage = 1;
+         filterAndPaginate();
+      });
+   }
+
+   if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+         if (currentPage > 1) {
+            currentPage--;
+            filterAndPaginate();
+            window.scrollTo({ top: 0, behavior: "smooth" });
          }
       });
    }
+
+   if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+         const totalPages = Math.ceil(filteredItems.length / pageSize);
+         if (currentPage < totalPages) {
+            currentPage++;
+            filterAndPaginate();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+         }
+      });
+   }
+
+   if (pageJumpInput) {
+      pageJumpInput.addEventListener("change", (e) => {
+         const input = e.target as HTMLInputElement;
+         const page = parseInt(input.value, 10);
+         const totalPages = Math.ceil(filteredItems.length / pageSize);
+
+         if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            filterAndPaginate();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+         } else {
+            input.value = String(currentPage);
+         }
+      });
+   }
+
+   // Initial load
+   filterAndPaginate();
 </script>
