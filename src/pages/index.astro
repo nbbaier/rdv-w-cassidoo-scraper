@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import QuestionsList from "../components/QuestionsList";
+import QuestionsApp from "../components/QuestionsApp.astro";
 import Layout from "../layouts/Layout.astro";
 
 const questions = await getCollection("questions");
@@ -23,5 +23,5 @@ const years = [
 ---
 
 <Layout title="Cassidoo's Interview Questions Archive">
-   <QuestionsList client:load questions={questionsData} years={years} />
+   <QuestionsApp questions={questionsData} years={years} />
 </Layout>
