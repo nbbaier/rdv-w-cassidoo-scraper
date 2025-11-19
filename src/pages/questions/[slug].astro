@@ -4,13 +4,19 @@ import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
    const questions = await getCollection("questions");
-   return questions.map((question) => ({
+   questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+   return questions.map((question, index) => ({
       params: { slug: question.slug },
-      props: { question },
+      props: {
+         question,
+         prevQuestion: index > 0 ? questions[index - 1] : null,
+         nextQuestion: index < questions.length - 1 ? questions[index + 1] : null,
+      },
    }));
 }
 
-const { question } = Astro.props;
+const { question, prevQuestion, nextQuestion } = Astro.props;
 const { Content } = await question.render();
 
 const date = new Date(question.data.date).toLocaleDateString("en-US", {
@@ -40,23 +46,54 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
          <Content />
       </div>
 
-      <div
-         class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center not-prose"
-      >
-         <a
-            href="/"
-            class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2"
-         >
-            ← Back to all questions
-         </a>
-         <a
-            href={question.data.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-slate-500 hover:text-slate-700 text-sm flex items-center gap-1"
-         >
-            View original newsletter ↗
-         </a>
+      <div class="mt-8 pt-6 border-t border-slate-100 not-prose">
+         <!-- Navigation arrows -->
+         <div class="flex justify-between items-center mb-4">
+            {prevQuestion ? (
+               <a
+                  href={`/questions/${prevQuestion.slug}`}
+                  class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2 group"
+               >
+                  <span>← Previous</span>
+                  <span class="text-sm text-slate-500 group-hover:text-slate-700">
+                     #{prevQuestion.data.number}
+                  </span>
+               </a>
+            ) : (
+               <div></div>
+            )}
+            {nextQuestion ? (
+               <a
+                  href={`/questions/${nextQuestion.slug}`}
+                  class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2 group"
+               >
+                  <span class="text-sm text-slate-500 group-hover:text-slate-700">
+                     #{nextQuestion.data.number}
+                  </span>
+                  <span>Next →</span>
+               </a>
+            ) : (
+               <div></div>
+            )}
+         </div>
+
+         <!-- Back and original links -->
+         <div class="flex justify-between items-center">
+            <a
+               href="/"
+               class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-2"
+            >
+               ← Back to all questions
+            </a>
+            <a
+               href={question.data.url}
+               target="_blank"
+               rel="noopener noreferrer"
+               class="text-slate-500 hover:text-slate-700 text-sm flex items-center gap-1"
+            >
+               View original newsletter ↗
+            </a>
+         </div>
       </div>
    </article>
 </Layout>
