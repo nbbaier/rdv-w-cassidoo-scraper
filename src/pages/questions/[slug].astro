@@ -42,7 +42,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
          >
             <div class="justify-self-start">
                {
-                  prevQuestion ? (
+                  prevQuestion && (
                      <Button variant="ghost" asChild>
                         <a
                            href={`/questions/${prevQuestion.slug}`}
@@ -54,15 +54,6 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
                            </span>
                         </a>
                      </Button>
-                  ) : (
-                     <div class="invisible">
-                        <Button variant="ghost" asChild>
-                           <a href="#" class="flex items-center gap-2">
-                              <ChevronLeft className="size-4" />
-                              #000
-                           </a>
-                        </Button>
-                     </div>
                   )
                }
             </div>
@@ -73,7 +64,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
             </div>
             <div class="justify-self-end">
                {
-                  nextQuestion ? (
+                  nextQuestion && (
                      <Button variant="ghost" asChild>
                         <a
                            href={`/questions/${nextQuestion.slug}`}
@@ -85,17 +76,6 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
                            <ChevronRight className="size-4" />
                         </a>
                      </Button>
-                  ) : (
-                     <div class="invisible">
-                        <Button variant="ghost" asChild>
-                           <a href="#" class="flex items-center gap-2">
-                              <span class="text-sm text-muted-foreground">
-                                 #000
-                              </span>
-                              <ChevronRight className="size-4" />
-                           </a>
-                        </Button>
-                     </div>
                   )
                }
             </div>
