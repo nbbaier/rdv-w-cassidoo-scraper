@@ -1,47 +1,50 @@
-import type { HTMLAnchorElement } from "linkedom";
 import { parseHTML } from "linkedom";
-import type { Email } from "./utils";
-import { formatDate } from "./utils";
+import { type Email, formatDate } from "./utils";
 
 const data: Email[] = [];
+const links: Set<string> = new Set();
 
-const urls: string[] = [
-	"https://buttondown.com/cassidoo/archive/?page=1",
-	"https://buttondown.com/cassidoo/archive/?page=2",
-	"https://buttondown.com/cassidoo/archive/?page=3",
-	"https://buttondown.com/cassidoo/archive/?page=4",
-	"https://buttondown.com/cassidoo/archive/?page=5",
-	"https://buttondown.com/cassidoo/archive/?page=6",
-	"https://buttondown.com/cassidoo/archive/?page=7",
-	"https://buttondown.com/cassidoo/archive/?page=8",
-	"https://buttondown.com/cassidoo/archive/?page=9",
-];
+let page = 1;
+let listGrowing = true;
 
-for (const url of urls) {
+while (listGrowing) {
+	const url = `https://buttondown.com/cassidoo/archive/?page=${page}`;
 	console.log(url);
+
 	const res = await fetch(url);
 	const html = await res.text();
 	const { document } = parseHTML(html);
-	const emails = Array.from(document.querySelectorAll(".email")) as Element[];
+
+	const emails = Array.from(
+		document.querySelectorAll(".email-list > a.email-link"),
+	) as Element[];
+
+	console.log(url, emails.length);
+
+	const sizeBefore = links.size;
 
 	for (const email of emails) {
-		const link = email.querySelector("a") as unknown as HTMLAnchorElement;
-		const metadata = Array.from(
-			(email.querySelector(".email-metadata") as Element).children,
-		).map(
-			(child) =>
-				(child as Element).textContent?.replace(/\s+/g, " ").trim() ?? "",
-		)[0];
-		console.log(metadata);
+		const link = email.getAttribute("href");
+		if (!link) continue;
+
+		if (links.has(link)) continue;
+		links.add(link);
+
+		const metadata = email.querySelector(".email-metadata")?.textContent.trim();
+
 		data.push({
-			url: link?.href,
-			date: formatDate(metadata?.replace(/(#\d{1,3}) /, "").trim() as string),
-			number: Number.parseInt(
-				(metadata?.match(/(#\d{1,3})/)?.[0] ?? "").replace("#", ""),
-				10,
-			),
+			url: link,
+			date: formatDate(metadata as string),
+			number: 0,
 		});
 	}
+
+	const sizeAfter = links.size;
+	listGrowing = sizeAfter > sizeBefore;
+
+	if (listGrowing) page++;
 }
+
+console.log(data.length);
 
 await Bun.write("./scraper/data/data.json", JSON.stringify(data, null, 2));
