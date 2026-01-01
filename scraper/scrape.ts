@@ -9,7 +9,6 @@ let listGrowing = true;
 
 while (listGrowing) {
 	const url = `https://buttondown.com/cassidoo/archive/?page=${page}`;
-	console.log(url);
 
 	const res = await fetch(url);
 	const html = await res.text();
@@ -45,6 +44,9 @@ while (listGrowing) {
 	if (listGrowing) page++;
 }
 
-console.log(data.length);
-
+let newsLetterNumber = 1;
+for (const email of data.sort((a, b) => a.date.localeCompare(b.date))) {
+	email.number = newsLetterNumber;
+	newsLetterNumber++;
+}
 await Bun.write("./scraper/data/data.json", JSON.stringify(data, null, 2));

@@ -2,16 +2,16 @@
 import { Icon } from "astro-icon/components";
 
 interface Question {
-  slug: string;
-  number: number;
-  date: string;
-  excerpt: string;
-  year: number;
+   slug: string;
+   number: number;
+   date: string;
+   excerpt: string;
+   year: number;
 }
 
 interface Props {
-  questions: Question[];
-  years: number[];
+   questions: Question[];
+   years: number[];
 }
 
 const { questions, years } = Astro.props;
@@ -25,260 +25,280 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
 ---
 
 <div id="questions-app" class="mb-4 space-y-4">
-  <!-- Search and Year Filter -->
-  <div class="flex gap-2 mx-auto max-w-4xl sm:flex-row">
-    <div class="relative flex-1">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-      >
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.3-4.3"></path>
-      </svg>
-      <input
-        type="text"
-        id="search-input"
-        placeholder="Search questions..."
-        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-10 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-white"
-      />
-    </div>
-
-    <div class="relative w-[180px]">
-      <div class="relative custom-select">
-        <button
-          type="button"
-          id="year-select-trigger"
-          class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-        >
-          <span class="value">All Years</span>
-          <Icon name="lucide:chevron-down" class="h-4 w-4 opacity-50" />
-        </button>
-        <div
-          id="year-select-dropdown"
-          class="custom-select-dropdown hidden absolute top-full mt-1 z-50 w-full min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80"
-        >
-          <div class="max-h-[300px] overflow-y-auto p-1">
-            <div
-              class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
-              data-value=""
-            >
-              <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                <Icon name="lucide:check" class="h-4 w-4 check-icon" />
-              </span>
-              All Years
-            </div>
-            {
-              years.map((year) => (
-                <div
-                  class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                  data-value={year}
-                >
-                  <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                    <Icon name="lucide:check" class="h-4 w-4 check-icon opacity-0" />
-                  </span>
-                  {year}
-                </div>
-              ))
-            }
-          </div>
-        </div>
-        <input type="hidden" id="year-select" value="" />
+   <!-- Search and Year Filter -->
+   <div class="flex gap-2 mx-auto max-w-4xl sm:flex-row">
+      <div class="relative flex-1">
+         <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+         >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+         </svg>
+         <input
+            type="text"
+            id="search-input"
+            placeholder="Search questions..."
+            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-10 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-white"
+         />
       </div>
-    </div>
-  </div>
 
-  <!-- Pagination Controls -->
-  <div
-    class="flex gap-3 p-4 mx-auto max-w-4xl bg-white rounded-lg border shadow-sm flex-col border-slate-100"
-  >
-    <div class="flex gap-4 justify-between items-center">
-      <div class="flex gap-2 items-center">
-        <label for="page-size-select" class="hidden text-sm text-slate-600 sm:inline">
-          Show:
-        </label>
-        <div class="relative custom-select min-w-[70px]">
+      <div class="relative w-[180px]">
+         <div class="relative custom-select">
             <button
-              type="button"
-              id="page-size-trigger"
-              class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 gap-2"
+               type="button"
+               id="year-select-trigger"
+               class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
             >
-              <span class="value">10</span>
-              <Icon name="lucide:chevron-down" class="h-4 w-4 opacity-50" />
+               <span class="value">All Years</span>
+               <Icon name="lucide:chevron-down" class="h-4 w-4 opacity-50" />
             </button>
             <div
-              id="page-size-dropdown"
-              class="custom-select-dropdown hidden absolute top-full mt-1 z-50 w-full min-w-[4rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80"
+               id="year-select-dropdown"
+               class="custom-select-dropdown hidden absolute top-full mt-1 z-50 w-full min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80"
             >
-              <div class="max-h-[300px] overflow-y-auto p-1">
-                {[10, 25, 50, 100].map((size) => (
-                    <div
-                      class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                      data-value={size}
-                    >
-                      <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                        <Icon name="lucide:check" class={`h-4 w-4 check-icon ${size === 10 ? '' : 'opacity-0'}`} />
-                      </span>
-                      {size}
-                    </div>
-                ))}
-              </div>
+               <div class="max-h-[300px] overflow-y-auto p-1">
+                  <div
+                     class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                     data-value=""
+                  >
+                     <span
+                        class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center"
+                     >
+                        <Icon name="lucide:check" class="h-4 w-4 check-icon" />
+                     </span>
+                     All Years
+                  </div>
+                  {
+                     years.map((year) => (
+                        <div
+                           class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                           data-value={year}
+                        >
+                           <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                              <Icon
+                                 name="lucide:check"
+                                 class="h-4 w-4 check-icon opacity-0"
+                              />
+                           </span>
+                           {year}
+                        </div>
+                     ))
+                  }
+               </div>
             </div>
-            <input type="hidden" id="page-size-select" value="10" />
-        </div>
-        <span class="hidden text-sm text-slate-600 sm:inline"> per page </span>
+            <input type="hidden" id="year-select" value="" />
+         </div>
       </div>
+   </div>
 
-      <div class="flex gap-2 items-center">
-        <button
-          id="prev-page-btn"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 has-[>svg]:px-2.5"
-          disabled
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="size-4"
-          >
-            <path d="m15 18-6-6 6-6"></path>
-          </svg>
-        </button>
-        <div class="flex gap-1.5 items-center">
-          <input
-            type="number"
-            id="page-input"
-            min="1"
-            value="1"
-            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input min-w-0 rounded-md border bg-transparent shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-sm h-9 w-10 sm:w-10 px-1.5 sm:px-2 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          />
-          <span class="text-sm text-slate-600">/</span>
-          <span id="total-pages-display" class="text-sm text-slate-600">
-            {Math.ceil(totalItems / initialPageSize)}
-          </span>
-        </div>
-        <button
-          id="next-page-btn"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 has-[>svg]:px-2.5"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="size-4"
-          >
-            <path d="m9 18 6-6-6-6"></path>
-          </svg>
-        </button>
-      </div>
-
-      <div id="showing-range" class="hidden text-sm text-slate-600 sm:block">
-        {showingRange} of {totalItems}
-      </div>
-    </div>
-
-    <!-- Mobile-only total count -->
-    <div id="showing-range-mobile" class="text-xs text-center text-slate-500 sm:hidden">
-      {showingRange} of {totalItems} questions
-    </div>
-  </div>
-
-  <!-- Questions List -->
-  <div id="questions-list" class="flex flex-col gap-2">
-    {
-      initialQuestions.map((question) => (
-        <a href={`/questions/${question.slug}`}>
-          <div class="rounded-xl border bg-card text-card-foreground shadow transition-all hover:border-indigo-300 hover:shadow-md group cursor-pointer">
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <div class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-indigo-50 text-indigo-600 hover:bg-indigo-100">
-                  #{question.number}
-                </div>
-                <time class="text-sm text-slate-400">{question.date}</time>
-              </div>
-              <div class="text-slate-700 line-clamp-2 group-hover:text-slate-900">
-                {question.excerpt}...
-              </div>
+   <!-- Pagination Controls -->
+   <div
+      class="flex gap-3 p-4 mx-auto max-w-4xl bg-white rounded-lg border shadow-sm flex-col border-slate-100"
+   >
+      <div class="flex gap-4 justify-between items-center">
+         <div class="flex gap-2 items-center">
+            <label
+               for="page-size-select"
+               class="hidden text-sm text-slate-600 sm:inline"
+            >
+               Show:
+            </label>
+            <div class="relative custom-select min-w-[70px]">
+               <button
+                  type="button"
+                  id="page-size-trigger"
+                  class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 gap-2"
+               >
+                  <span class="value">10</span>
+                  <Icon name="lucide:chevron-down" class="h-4 w-4 opacity-50" />
+               </button>
+               <div
+                  id="page-size-dropdown"
+                  class="custom-select-dropdown hidden absolute top-full mt-1 z-50 w-full min-w-[4rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80"
+               >
+                  <div class="max-h-[300px] overflow-y-auto p-1">
+                     {
+                        [10, 25, 50, 100].map((size) => (
+                           <div
+                              class="option-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                              data-value={size}
+                           >
+                              <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                                 <Icon
+                                    name="lucide:check"
+                                    class={`h-4 w-4 check-icon ${size === 10 ? "" : "opacity-0"}`}
+                                 />
+                              </span>
+                              {size}
+                           </div>
+                        ))
+                     }
+                  </div>
+               </div>
+               <input type="hidden" id="page-size-select" value="10" />
             </div>
-          </div>
-        </a>
-      ))
-    }
-  </div>
-    <div id="no-results" class="hidden py-12 text-center text-slate-500">
-        No questions found matching your search.
-    </div>
+            <span class="hidden text-sm text-slate-600 sm:inline">
+               per page
+            </span>
+         </div>
+
+         <div class="flex gap-2 items-center">
+            <button
+               id="prev-page-btn"
+               class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 has-[>svg]:px-2.5"
+               disabled
+            >
+               <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="size-4"
+               >
+                  <path d="m15 18-6-6 6-6"></path>
+               </svg>
+            </button>
+            <div class="flex gap-1.5 items-center">
+               <input
+                  type="number"
+                  id="page-input"
+                  min="1"
+                  value="1"
+                  class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input min-w-0 rounded-md border bg-transparent shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-sm h-9 w-10 sm:w-10 px-1.5 sm:px-2 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+               />
+               <span class="text-sm text-slate-600">/</span>
+               <span id="total-pages-display" class="text-sm text-slate-600">
+                  {Math.ceil(totalItems / initialPageSize)}
+               </span>
+            </div>
+            <button
+               id="next-page-btn"
+               class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 has-[>svg]:px-2.5"
+            >
+               <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="size-4"
+               >
+                  <path d="m9 18 6-6-6-6"></path>
+               </svg>
+            </button>
+         </div>
+
+         <div id="showing-range" class="hidden text-sm text-slate-600 sm:block">
+            {showingRange} of {totalItems}
+         </div>
+      </div>
+
+      <!-- Mobile-only total count -->
+      <div
+         id="showing-range-mobile"
+         class="text-xs text-center text-slate-500 sm:hidden"
+      >
+         {showingRange} of {totalItems} questions
+      </div>
+   </div>
+
+   <!-- Questions List -->
+   <div id="questions-list" class="flex flex-col gap-2">
+      {
+         initialQuestions.map((question) => (
+            <a href={`/questions/${question.slug}`}>
+               <div class="rounded-xl border bg-card text-card-foreground shadow transition-all hover:border-indigo-300 hover:shadow-md group cursor-pointer">
+                  <div class="p-6">
+                     <div class="flex justify-between items-start mb-2">
+                        <div class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-indigo-50 text-indigo-600 hover:bg-indigo-100">
+                           #{question.number}
+                        </div>
+                        <time class="text-sm text-slate-400">
+                           {question.date}
+                        </time>
+                     </div>
+                     <div class="text-slate-700 line-clamp-2 group-hover:text-slate-900">
+                        {question.excerpt}...
+                     </div>
+                  </div>
+               </div>
+            </a>
+         ))
+      }
+   </div>
+   <div id="no-results" class="hidden py-12 text-center text-slate-500">
+      No questions found matching your search.
+   </div>
 </div>
 
 <script is:inline define:vars={{ questions, initialPageSize }}>
-  let allQuestions = questions;
-  let filteredQuestions = [...allQuestions];
-  let currentPage = 1;
-  let pageSize = initialPageSize;
-  let searchTerm = "";
-  let selectedYear = "";
-  let searchIndex = [];
+   let allQuestions = questions;
+   let filteredQuestions = [...allQuestions];
+   let currentPage = 1;
+   let pageSize = initialPageSize;
+   let searchTerm = "";
+   let selectedYear = "";
+   let searchIndex = [];
 
-  // DOM Elements
-  const searchInput = document.getElementById("search-input");
-  const yearSelectInput = document.getElementById("year-select");
-  const pageSizeSelectInput = document.getElementById("page-size-select");
-  const prevPageBtn = document.getElementById("prev-page-btn");
-  const nextPageBtn = document.getElementById("next-page-btn");
-  const pageInput = document.getElementById("page-input");
-  const totalPagesDisplay = document.getElementById("total-pages-display");
-  const showingRangeEl = document.getElementById("showing-range");
-  const showingRangeMobileEl = document.getElementById("showing-range-mobile");
-  const questionsListEl = document.getElementById("questions-list");
-  const noResultsEl = document.getElementById("no-results");
+   // DOM Elements
+   const searchInput = document.getElementById("search-input");
+   const yearSelectInput = document.getElementById("year-select");
+   const pageSizeSelectInput = document.getElementById("page-size-select");
+   const prevPageBtn = document.getElementById("prev-page-btn");
+   const nextPageBtn = document.getElementById("next-page-btn");
+   const pageInput = document.getElementById("page-input");
+   const totalPagesDisplay = document.getElementById("total-pages-display");
+   const showingRangeEl = document.getElementById("showing-range");
+   const showingRangeMobileEl = document.getElementById("showing-range-mobile");
+   const questionsListEl = document.getElementById("questions-list");
+   const noResultsEl = document.getElementById("no-results");
 
-  // Custom Select Logic
-  function setupCustomSelect(triggerId, dropdownId, inputId, onSelect) {
-    const trigger = document.getElementById(triggerId);
-    const dropdown = document.getElementById(dropdownId);
-    const input = document.getElementById(inputId);
-    const options = dropdown.querySelectorAll('.option-item');
+   // Custom Select Logic
+   function setupCustomSelect(triggerId, dropdownId, inputId, onSelect) {
+      const trigger = document.getElementById(triggerId);
+      const dropdown = document.getElementById(dropdownId);
+      const input = document.getElementById(inputId);
+      const options = dropdown.querySelectorAll(".option-item");
 
-    if (!trigger || !dropdown || !input) return;
+      if (!trigger || !dropdown || !input) return;
 
-    // Toggle Dropdown
-    trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isHidden = dropdown.classList.contains('hidden');
-        // Close all other dropdowns
-        document.querySelectorAll('.custom-select-dropdown').forEach(el => {
-            if (el.id !== dropdownId) el.classList.add('hidden');
-        });
-        
-        if (isHidden) {
-            dropdown.classList.remove('hidden');
-        } else {
-            dropdown.classList.add('hidden');
-        }
-    });
+      // Toggle Dropdown
+      trigger.addEventListener("click", (e) => {
+         e.stopPropagation();
+         const isHidden = dropdown.classList.contains("hidden");
+         // Close all other dropdowns
+         document.querySelectorAll(".custom-select-dropdown").forEach((el) => {
+            if (el.id !== dropdownId) el.classList.add("hidden");
+         });
 
-    // Option Click
-    options.forEach(option => {
-        option.addEventListener('click', (e) => {
+         if (isHidden) {
+            dropdown.classList.remove("hidden");
+         } else {
+            dropdown.classList.add("hidden");
+         }
+      });
+
+      // Option Click
+      options.forEach((option) => {
+         option.addEventListener("click", (e) => {
             e.stopPropagation();
             const value = option.dataset.value;
             const label = option.textContent.trim();
@@ -287,81 +307,92 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
             input.value = value;
 
             // Update Trigger Label
-            const valueSpan = trigger.querySelector('.value');
+            const valueSpan = trigger.querySelector(".value");
             if (valueSpan) valueSpan.textContent = label;
 
             // Update Checkmarks
-            options.forEach(opt => {
-                const check = opt.querySelector('.check-icon');
-                if (check) {
-                    if (opt === option) {
-                        check.classList.remove('opacity-0');
-                    } else {
-                        check.classList.add('opacity-0');
-                    }
-                }
+            options.forEach((opt) => {
+               const check = opt.querySelector(".check-icon");
+               if (check) {
+                  if (opt === option) {
+                     check.classList.remove("opacity-0");
+                  } else {
+                     check.classList.add("opacity-0");
+                  }
+               }
             });
 
             // Close Dropdown
-            dropdown.classList.add('hidden');
+            dropdown.classList.add("hidden");
 
             // Trigger Callback
             if (onSelect) onSelect(value);
-        });
-    });
+         });
+      });
 
-    // Close on Click Outside
-    document.addEventListener('click', (e) => {
-        if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.add('hidden');
-        }
-    });
-  }
+      // Close on Click Outside
+      document.addEventListener("click", (e) => {
+         if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.add("hidden");
+         }
+      });
+   }
 
-  // Initialize Custom Selects
-  setupCustomSelect('year-select-trigger', 'year-select-dropdown', 'year-select', (val) => {
-      selectedYear = val;
-      currentPage = 1;
-      filterQuestions();
-  });
+   // Initialize Custom Selects
+   setupCustomSelect(
+      "year-select-trigger",
+      "year-select-dropdown",
+      "year-select",
+      (val) => {
+         selectedYear = val;
+         currentPage = 1;
+         filterQuestions();
+      }
+   );
 
-  setupCustomSelect('page-size-trigger', 'page-size-dropdown', 'page-size-select', (val) => {
-      pageSize = parseInt(val, 10);
-      currentPage = 1;
-      renderQuestions();
-  });
+   setupCustomSelect(
+      "page-size-trigger",
+      "page-size-dropdown",
+      "page-size-select",
+      (val) => {
+         pageSize = parseInt(val, 10);
+         currentPage = 1;
+         renderQuestions();
+      }
+   );
 
-  // Load search index
-  fetch("/search.json")
-    .then((res) => res.json())
-    .then((data) => {
-      searchIndex = data;
-    })
-    .catch((err) => console.error("Failed to load search index", err));
+   // Load search index
+   fetch("/search.json")
+      .then((res) => res.json())
+      .then((data) => {
+         searchIndex = data;
+      })
+      .catch((err) => console.error("Failed to load search index", err));
 
-  function renderQuestions() {
-    const totalPages = Math.ceil(filteredQuestions.length / pageSize);
-    const startIdx = (currentPage - 1) * pageSize;
-    const endIdx = Math.min(startIdx + pageSize, filteredQuestions.length);
-    const paginatedQuestions = filteredQuestions.slice(startIdx, endIdx);
+   function renderQuestions() {
+      const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = Math.min(startIdx + pageSize, filteredQuestions.length);
+      const paginatedQuestions = filteredQuestions.slice(startIdx, endIdx);
 
-    // Update Pagination UI
-    pageInput.value = currentPage;
-    pageInput.max = totalPages;
-    totalPagesDisplay.textContent = Math.max(totalPages, 1);
-    
-    prevPageBtn.disabled = currentPage === 1;
-    nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+      // Update Pagination UI
+      pageInput.value = currentPage;
+      pageInput.max = totalPages;
+      totalPagesDisplay.textContent = Math.max(totalPages, 1);
 
-    const rangeText = filteredQuestions.length === 0 ? "0-0" : `${startIdx + 1}-${endIdx}`;
-    showingRangeEl.textContent = `${rangeText} of ${filteredQuestions.length}`;
-    showingRangeMobileEl.textContent = `${rangeText} of ${filteredQuestions.length} questions`;
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
 
-    // Render Questions
-    if (paginatedQuestions.length > 0) {
-      questionsListEl.innerHTML = paginatedQuestions
-        .map(
-          (q) => `
+      const rangeText =
+         filteredQuestions.length === 0 ? "0-0" : `${startIdx + 1}-${endIdx}`;
+      showingRangeEl.textContent = `${rangeText} of ${filteredQuestions.length}`;
+      showingRangeMobileEl.textContent = `${rangeText} of ${filteredQuestions.length} questions`;
+
+      // Render Questions
+      if (paginatedQuestions.length > 0) {
+         questionsListEl.innerHTML = paginatedQuestions
+            .map(
+               (q) => `
         <a href="/questions/${q.slug}">
             <div class="rounded-xl border bg-card text-card-foreground shadow transition-all hover:border-indigo-300 hover:shadow-md group cursor-pointer">
                 <div class="p-6">
@@ -378,103 +409,105 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
             </div>
         </a>
       `
-        )
-        .join("");
-      questionsListEl.classList.remove("hidden");
-      noResultsEl.classList.add("hidden");
-    } else {
-      questionsListEl.innerHTML = "";
-      questionsListEl.classList.add("hidden");
-      noResultsEl.classList.remove("hidden");
-    }
-  }
+            )
+            .join("");
+         questionsListEl.classList.remove("hidden");
+         noResultsEl.classList.add("hidden");
+      } else {
+         questionsListEl.innerHTML = "";
+         questionsListEl.classList.add("hidden");
+         noResultsEl.classList.remove("hidden");
+      }
+   }
 
-  function filterQuestions() {
-    filteredQuestions = allQuestions;
+   function filterQuestions() {
+      filteredQuestions = allQuestions;
 
-    // Filter by year
-    if (selectedYear) {
-      filteredQuestions = filteredQuestions.filter(
-        (q) => q.year === parseInt(selectedYear, 10)
-      );
-    }
+      // Filter by year
+      if (selectedYear) {
+         filteredQuestions = filteredQuestions.filter(
+            (q) => q.year === parseInt(selectedYear, 10)
+         );
+      }
 
-    // Filter by search term
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      if (searchIndex.length > 0) {
-          const matchingSlugs = new Set();
-          searchIndex.forEach((item) => {
-              if (
+      // Filter by search term
+      if (searchTerm) {
+         const term = searchTerm.toLowerCase();
+         if (searchIndex.length > 0) {
+            const matchingSlugs = new Set();
+            searchIndex.forEach((item) => {
+               if (
                   item.excerpt.toLowerCase().includes(term) ||
                   item.date.includes(term) ||
                   String(item.number).includes(term) ||
                   item.slug.includes(term)
-              ) {
+               ) {
                   matchingSlugs.add(item.slug);
-              }
-          });
-          filteredQuestions = filteredQuestions.filter((q) => matchingSlugs.has(q.slug));
-      } else {
-          // Fallback if search index not loaded yet
-           filteredQuestions = filteredQuestions.filter(
-            (q) =>
-                q.date.includes(term) ||
-                String(q.number).includes(term) ||
-                q.excerpt.toLowerCase().includes(term)
-          );
+               }
+            });
+            filteredQuestions = filteredQuestions.filter((q) =>
+               matchingSlugs.has(q.slug)
+            );
+         } else {
+            // Fallback if search index not loaded yet
+            filteredQuestions = filteredQuestions.filter(
+               (q) =>
+                  q.date.includes(term) ||
+                  String(q.number).includes(term) ||
+                  q.excerpt.toLowerCase().includes(term)
+            );
+         }
       }
-    }
 
-    // Reset to page 1 if pages reduced
-    const totalPages = Math.ceil(filteredQuestions.length / pageSize);
-    if (currentPage > totalPages) {
-        currentPage = 1;
-    } else if (currentPage === 0 && totalPages > 0) {
-        currentPage = 1;
-    }
-    
-    renderQuestions();
-  }
+      // Reset to page 1 if pages reduced
+      const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+      if (currentPage > totalPages) {
+         currentPage = 1;
+      } else if (currentPage === 0 && totalPages > 0) {
+         currentPage = 1;
+      }
 
-  // Event Listeners
-  searchInput.addEventListener("input", (e) => {
-    searchTerm = e.target.value;
-    currentPage = 1;
-    filterQuestions();
-  });
-
-  prevPageBtn.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      window.scrollTo({ top: 0, behavior: "smooth" });
       renderQuestions();
-    }
-  });
+   }
 
-  nextPageBtn.addEventListener("click", () => {
-    const totalPages = Math.ceil(filteredQuestions.length / pageSize);
-    if (currentPage < totalPages) {
-      currentPage++;
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      renderQuestions();
-    }
-  });
+   // Event Listeners
+   searchInput.addEventListener("input", (e) => {
+      searchTerm = e.target.value;
+      currentPage = 1;
+      filterQuestions();
+   });
 
-  pageInput.addEventListener("change", (e) => {
-    let val = parseInt(e.target.value, 10);
-    const totalPages = Math.ceil(filteredQuestions.length / pageSize);
-    if (val >= 1 && val <= totalPages) {
-        currentPage = val;
-        renderQuestions();
-    } else {
-        e.target.value = currentPage;
-    }
-  });
-  
-  pageInput.addEventListener("keydown", (e) => {
-      if(e.key === 'Enter') {
+   prevPageBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+         currentPage--;
+         window.scrollTo({ top: 0, behavior: "smooth" });
+         renderQuestions();
+      }
+   });
+
+   nextPageBtn.addEventListener("click", () => {
+      const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+      if (currentPage < totalPages) {
+         currentPage++;
+         window.scrollTo({ top: 0, behavior: "smooth" });
+         renderQuestions();
+      }
+   });
+
+   pageInput.addEventListener("change", (e) => {
+      let val = parseInt(e.target.value, 10);
+      const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+      if (val >= 1 && val <= totalPages) {
+         currentPage = val;
+         renderQuestions();
+      } else {
+         e.target.value = currentPage;
+      }
+   });
+
+   pageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
          pageInput.blur();
       }
-  })
+   });
 </script>
