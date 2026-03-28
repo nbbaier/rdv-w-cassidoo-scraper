@@ -5,7 +5,7 @@
 		"strictNullChecks": true,
 		"allowSyntheticDefaultImports": true,
 		"moduleDetection": "force",
-		"baseUrl": ".",
+		"types": ["bun"],
 		"paths": {
 			"@/*": ["./src/*"]
 		},
