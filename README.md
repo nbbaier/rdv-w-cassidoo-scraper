@@ -1,53 +1,23 @@
-# Cassidoo's Interview Questions Scraper
+# Cassidoo's Interview Questions Archive
 
-A static web archive of interview questions scraped from Cassidy Williams' (Cassidoo) weekly newsletter. This project automates the process of fetching, parsing, and presenting these coding challenges in a clean, searchable interface.
+A static, searchable web archive of the interview questions from Cassidy Williams' (Cassidoo) [weekly newsletter](https://buttondown.com/cassidoo/). Backlog and weekly updates are pulled from the newsletter's RSS feed and rendered as an Astro static site.
 
-## Overview
+## How it works
 
-This codebase consists of two main parts: a **Scraper** and a **Frontend**.
+- **Scraper (`scraper/`)** — fetches `https://buttondown.com/cassidoo/rss?count=N` in a single request, extracts the "Interview question of the week" segment from each item's HTML body, and writes one markdown file per issue to `src/content/questions/`. A GitHub Action (`.github/workflows/weekly-scrape.yml`) runs this every Monday to pick up the latest issue. See [docs/adr/0001-rss-only-ingestion.md](docs/adr/0001-rss-only-ingestion.md) for the design rationale.
+- **Frontend (`src/`)** — Astro 5 static site with Tailwind CSS v4, loading questions via Astro Content Collections and offering client-side search/filter.
 
-### Architecture & Workflow
+## Quick start
 
-1.  **Scraper (`scraper/`)**
-    *   **Discovery**: Crawls the [Buttondown archive](https://buttondown.com/cassidoo/archive/) pages to identify past newsletters, extracting metadata (date, issue number) into `scraper/data/data.json`.
-    *   **Extraction**: Iterates through discovered newsletters, fetches full HTML, isolates the "Interview Question" section (using heuristic parsing), converts it to Markdown, and saves it to `src/content/questions/`.
-    *   **Automation**: A GitHub Action (`weekly-scrape.yml`) runs this process weekly to keep content fresh.
-
-2.  **Frontend (`src/`)**
-    *   **Framework**: Built with **Astro**, generating a static site.
-    *   **Content**: Uses Astro's Content Collections (`src/content/questions/*.md`) to manage the interview questions.
-    *   **UI**: A clean interface to list and filter questions by year.
-    *   **Styling**: Uses **Tailwind CSS**.
-
-### Key Technologies
-
-*   **Runtime**: **Bun** (used exclusively for dependencies, scripts, and dev server).
-*   **Language**: TypeScript.
-*   **Linting/Formatting**: Biome.
-*   **Tools**: `linkedom` / `jsdom` (parsing), `defuddle` (HTML-to-Markdown).
-
-## Getting Started
-
-To install dependencies:
+Requires [Bun](https://bun.com/).
 
 ```bash
 bun install
+bun run scrape    # populate src/content/questions/ from the RSS feed
+bun run dev       # local dev server
+bun run build     # build static site into dist/
 ```
 
-To run the scraper (crawl archives):
+## Contributing & agent guidance
 
-```bash
-bun run scrape
-```
-
-To generate markdown content from scraped data:
-
-```bash
-bun run generate
-```
-
-To start the development server:
-
-```bash
-bun run dev
-```
+Conventions, command reference, and architecture details live in [AGENTS.md](./AGENTS.md).
