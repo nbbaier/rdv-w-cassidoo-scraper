@@ -235,15 +235,14 @@ export async function getQuestion(email: Email) {
 					});
 					const file = await remark().use(remarkUnlink).process(result.content);
 
-					const output = `
- ---
- url: ${email.url}
- date: ${email.date}
- number: ${email.number}
- ---
- 
- ${String(file)}
-           `;
+					const output = `---
+url: ${email.url}
+date: ${email.date}
+number: ${email.number}
+---
+
+${String(file)}
+`;
 					await Bun.write(`./src/content/questions/${email.date}.md`, output);
 					return;
 				}
@@ -285,15 +284,14 @@ export async function getQuestion(email: Email) {
 	});
 	const file = await remark().use(remarkUnlink).process(result.content);
 
-	const output = `
- ---
- url: ${email.url}
- date: ${email.date}
- number: ${email.number}
- ---
- 
- ${String(file)}
-   `;
+	const output = `---
+url: ${email.url}
+date: ${email.date}
+number: ${email.number}
+---
+
+${String(file)}
+`;
 
 	await Bun.write(`./src/content/questions/${email.date}.md`, output);
 }
