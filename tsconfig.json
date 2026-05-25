@@ -1,15 +1,15 @@
 {
-	"extends": "astro/tsconfigs/strict",
+  "extends": "astro/tsconfigs/strict",
 
-	"compilerOptions": {
-		"strictNullChecks": true,
-		"allowSyntheticDefaultImports": true,
-		"moduleDetection": "force",
-		"types": ["bun"],
-		"paths": {
-			"@/*": ["./src/*"]
-		},
-		"jsx": "react-jsx",
-		"jsxImportSource": "react"
-	}
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleDetection": "force",
+    "types": ["bun"],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
 }

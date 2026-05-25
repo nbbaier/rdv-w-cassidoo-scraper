@@ -1,6 +1,6 @@
 # Agent Guidelines
 
-Source of truth for any agent working in this repo (Claude, Cursor, Aider, Codex, etc.).
+Source of truth for any agent working in this repo.
 
 ## Project Overview
 
@@ -24,8 +24,9 @@ This project exclusively uses **Bun** (not Node.js, npm, or pnpm):
 bun run dev                  # Start Astro dev server
 bun run build                # Build static site
 bun run preview              # Preview production build
-bun run check                # Astro type / content-schema check
-bunx biome check . --write   # Lint + format
+bun run check                # Ultracite (Biome) lint check
+bun run fix                  # Ultracite (Biome) auto-fix
+bun run check:astro          # Astro type / content-schema check
 
 bun run scrape               # Fetch RSS (COUNT=1000 default), write any missing question files
 COUNT=20 bun run scrape      # Smaller window — only safe if every item already exists on disk
@@ -33,13 +34,13 @@ COUNT=20 bun run scrape      # Smaller window — only safe if every item alread
 
 ## Code Style
 
-Biome handles formatting and linting (`biome.json`):
+Linting/formatting is handled by **Ultracite** (a Biome preset) — see `biome.jsonc`:
 
 - Tabs for indentation, double quotes for strings.
-- Imports are organised by Biome's `assist`.
 - TypeScript with strict typing; prefer `interface` for object shapes.
-- Prefer Bun-native APIs (`Bun.file`, `Bun.write`, `Bun.serve`) over the Node `fs` equivalents.
+- Prefer Bun-native APIs (`Bun.file`, `Bun.write`, `Bun.serve`) over Node `fs` equivalents.
 - Astro components: keep logic in the frontmatter (`---`) separate from the template.
+- Run `bun run fix` before committing.
 
 ## Architecture
 
@@ -65,12 +66,12 @@ Single-step pipeline driven by Buttondown's RSS feed (see [docs/adr/0001-rss-onl
 
 ### Frontend
 
-- **Framework**: Astro 5 (static site generation).
-- **Styling**: Tailwind CSS v4 via `@tailwindcss/vite`.
+- **Framework**: Astro 6 (static site generation).
+- **Styling**: Tailwind CSS v4 via `@tailwindcss/vite`; global styles in `src/styles/`.
 - **Content**: Astro Content Collections, loaded from `src/content/questions/*.md`.
    - Schema (`src/content.config.ts`): `{ url: string, date: Date, number: number }`.
    - Files are named by date (`YYYY-MM-DD.md`); Astro derives slugs from filenames.
-- **Icons**: `astro-icon`.
+- **Icons**: `astro-icon` with `@iconify-json/lucide`.
 
 ### File Structure
 
@@ -87,7 +88,8 @@ src/
   │   ├── search.json.ts
   │   └── questions/[slug].astro
   ├── layouts/Layout.astro
-  └── components/QuestionsApp.astro
+  ├── components/QuestionsApp.astro
+  └── styles/
 docs/adr/              # Architectural decisions (start at 0001)
 ```
 
@@ -103,7 +105,7 @@ docs/adr/              # Architectural decisions (start at 0001)
 - **Re-scraping**: `scraper/scrape.ts` skips files that already exist. To re-extract an issue, delete the corresponding `src/content/questions/{date}.md` first.
 - **Numbering**: `number` is a synthetic ordinal — index of the item in the oldest-first sort across all items the feed returned. This is why CI uses the default `COUNT=1000`: if the feed window doesn't cover the entire archive, new issues are numbered relative to the window (e.g. `20`) instead of continuing the global sequence (e.g. `458`).
 - **Date format**: ISO 8601 `YYYY-MM-DD`, derived from the RSS `<pubDate>`.
-- **Dependencies**:
+- **Key dependencies**:
    - `feedsmith` — RSS parser
    - `jsdom` — DOM for each item's description HTML
    - `defuddle` — HTML → Markdown
@@ -111,4 +113,5 @@ docs/adr/              # Architectural decisions (start at 0001)
 
 ## Testing & Validation
 
-There is no test suite. Validation = running `bun run check` (Astro content schema + TypeScript), and eyeballing the summary line printed at the end of `bun run scrape` (a non-zero "failed" count generally means an issue without an interview segment, not a parser regression — but worth verifying).
+There is no test suite. Validation = running `bun run check` (Ultracite/Biome) and `bunx astro check` (content schema + TypeScript), plus eyeballing the summary line printed at the end of `bun run scrape` (a non-zero "failed" count generally means an issue without an interview segment, not a parser regression — but worth verifying).
+

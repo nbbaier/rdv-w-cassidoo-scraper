@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "overrides": [
+    {
+      "includes": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useSortedClasses": "off"
+          },
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scraper/**/*.ts"],
+      "javascript": {
+        "globals": ["Bun"]
+      }
+    }
+  ],
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/astro",
+    "ultracite/biome/vitest"
+  ],
+  "assist": {
+    "actions": {
+      "source": {
+        "useSortedAttributes": "on"
+      }
+    }
+  }
+}

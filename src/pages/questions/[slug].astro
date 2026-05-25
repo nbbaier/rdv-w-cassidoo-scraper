@@ -4,152 +4,158 @@ import { Icon } from "astro-icon/components";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
-	const questions = await getCollection("questions");
-	questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  const questions = await getCollection("questions");
+  questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-	return questions.map((question, index) => ({
-		params: { slug: question.id },
-		props: {
-			question,
-			prevQuestion: index > 0 ? questions[index - 1] : null,
-			nextQuestion: index < questions.length - 1 ? questions[index + 1] : null,
-		},
-	}));
+  return questions.map((question, index) => ({
+    params: { slug: question.id },
+    props: {
+      question,
+      prevQuestion: index > 0 ? questions[index - 1] : null,
+      nextQuestion: index < questions.length - 1 ? questions[index + 1] : null,
+    },
+  }));
 }
 
 const { question, prevQuestion, nextQuestion } = Astro.props;
 const { Content } = await render(question);
 
 const date = new Date(question.data.date).toLocaleDateString("en-US", {
-	weekday: "long",
-	year: "numeric",
-	month: "long",
-	day: "numeric",
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
 });
 ---
 
 <Layout
-   title={`Question #${question.data.number} - Cassidoo's Interview Questions`}
+  title={`Question #${question.data.number} - Cassidoo's Interview Questions`}
 >
-   <div class="rounded-xl border bg-card text-card-foreground shadow prose prose-slate max-w-none">
-      <div class="p-8">
-         <div
-            class="grid grid-cols-3 items-center mb-6 not-prose pb-6 border-b border-slate-100"
-         >
-            <div class="justify-self-start">
-               {
-                  prevQuestion && (
-                        <a
-                           href={`/questions/${prevQuestion.id}`}
-                           class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex items-center gap-2"
-                        >
-                           <Icon name="lucide:chevron-left" class="size-4" />
-                           <span class="text-sm text-muted-foreground">
-                              #{prevQuestion.data.number}
-                           </span>
-                        </a>
-                  )
-               }
-            </div>
-            <div class="justify-self-center">
-                  <a href="/" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3">All questions</a>
-            </div>
-            <div class="justify-self-end">
-               {
-                  nextQuestion && (
-                        <a
-                           href={`/questions/${nextQuestion.id}`}
-                           class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex items-center gap-2"
-                        >
-                           <span class="text-sm text-muted-foreground">
-                              #{nextQuestion.data.number}
-                           </span>
-                           <Icon name="lucide:chevron-right" class="size-4" />
-                        </a>
-                  )
-               }
-            </div>
-         </div>
-
-         <div class="flex items-center justify-between mb-6 not-prose">
-            <span
-               class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-transparent"
-            >
-               #{question.data.number}
-            </span>
-            <time class="text-sm text-slate-500">{date}</time>
-         </div>
-
-         <div class="markdown-content">
-            <Content />
-         </div>
-
-         <div class="mt-8 pt-6 border-t border-slate-100 not-prose">
-            <!-- Bottom links -->
-            <div class="flex justify-between items-center">
-                  <a href="/" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-10 px-4 py-2">← Back to all questions</a>
-                  <a
-                     href={question.data.url}
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3"
-                  >
-                     View original newsletter ↗
-                  </a>
-            </div>
-         </div>
+  <div
+    class="max-w-none rounded-xl border shadow bg-card text-card-foreground prose prose-slate"
+  >
+    <div class="p-8">
+      <div
+        class="grid grid-cols-3 items-center pb-6 mb-6 border-b not-prose border-slate-100"
+      >
+        <div class="justify-self-start">
+          {prevQuestion && (
+                     <a
+                        class="flex inline-flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        href={`/questions/${prevQuestion.id}`}
+                     >
+                        <Icon class="size-4" name="lucide:chevron-left" />
+                        <span class="text-sm text-muted-foreground">
+                           #{prevQuestion.data.number}
+                        </span>
+                     </a>
+                  )}
+        </div>
+        <div class="justify-self-center">
+          <a
+            href="/"
+            class="inline-flex justify-center items-center px-3 h-9 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+            >All questions</a
+          >
+        </div>
+        <div class="justify-self-end">
+          {nextQuestion && (
+                     <a
+                        class="flex inline-flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        href={`/questions/${nextQuestion.id}`}
+                     >
+                        <span class="text-sm text-muted-foreground">
+                           #{nextQuestion.data.number}
+                        </span>
+                        <Icon class="size-4" name="lucide:chevron-right" />
+                     </a>
+                  )}
+        </div>
       </div>
-   </div>
+
+      <div class="flex justify-between items-center mb-6 not-prose">
+        <span
+          class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-indigo-100"
+        >
+          #{question.data.number}
+        </span>
+        <time class="text-sm text-slate-500">{date}</time>
+      </div>
+
+      <div class="markdown-content">
+        <Content />
+      </div>
+
+      <div class="pt-6 mt-8 border-t border-slate-100 not-prose">
+        <!-- Bottom links -->
+        <div class="flex justify-between items-center">
+          <a
+            href="/"
+            class="inline-flex justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline"
+            >← Back to all questions</a
+          >
+          <a
+            href={question.data.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex justify-center items-center px-3 h-9 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+          >
+            View original newsletter ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>
 
 <style is:global>
-   /* Custom styling for the markdown content to look nice */
-   .markdown-content h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-top: 0;
-      margin-bottom: 1rem;
-   }
-   .markdown-content p {
-g      margin-bottom: 1rem;
-      line-height: 1.625;
-      color: #334155;
-   }
-   .markdown-content pre {
-      background-color: #0f172a;
-      color: #f8fafc;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-   }
-   .markdown-content code {
-      background-color: #f1f5f9;
-      color: #db2777;
-      padding: 0.125rem 0.375rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
-      font-family:
-         ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-   }
-   .markdown-content pre code {
-      background-color: transparent;
-      color: inherit;
-      padding: 0;
-      font-size: 0.875rem;
-   }
-   .markdown-content ul {
-      list-style-type: disc;
-      list-style-position: outside;
-      margin-left: 1.5rem;
-      margin-bottom: 1rem;
-      color: #334155;
-   }
-   .markdown-content ul > li + li {
-      margin-top: 0.25rem;
-   }
-   .markdown-content li {
-      padding-left: 0.25rem;
-   }
+  /* Custom styling for the markdown content to look nice */
+  .markdown-content h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .markdown-content p {
+    margin-bottom: 1rem;
+    line-height: 1.625;
+    color: #334155;
+  }
+  .markdown-content pre {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    color: #f8fafc;
+    background-color: #0f172a;
+    border-radius: 0.5rem;
+  }
+  .markdown-content code {
+    padding: 0.125rem 0.375rem;
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+    color: #db2777;
+    background-color: #f1f5f9;
+    border-radius: 0.25rem;
+  }
+  .markdown-content pre code {
+    padding: 0;
+    font-size: 0.875rem;
+    color: inherit;
+    background-color: transparent;
+  }
+  .markdown-content ul {
+    margin-bottom: 1rem;
+    margin-left: 1.5rem;
+    color: #334155;
+    list-style-position: outside;
+    list-style-type: disc;
+  }
+  .markdown-content li {
+    padding-left: 0.25rem;
+  }
+  .markdown-content ul > li + li {
+    margin-top: 0.25rem;
+  }
 </style>
