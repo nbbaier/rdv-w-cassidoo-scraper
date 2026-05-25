@@ -2,7 +2,6 @@ name: Weekly Scrape
 
 on:
    schedule:
-      
       - cron: "0 12 * * 1"
    workflow_dispatch: # Allow manual triggering
 
