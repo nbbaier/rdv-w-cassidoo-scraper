@@ -5,11 +5,11 @@ export async function GET() {
 
 	const searchIndex = questions.map((question) => {
 		return {
-			slug: question.slug,
+			slug: question.id,
 			date: question.data.date.toISOString().split("T")[0],
 			number: question.data.number,
 			// Create a simple excerpt by removing markdown syntax and taking the first 200 chars
-			excerpt: `${question.body
+			excerpt: `${(question.body ?? "")
 				.replace(/[#*`[\]()]/g, "") // Remove basic markdown chars
 				.replace(/\n+/g, " ") // Replace newlines with spaces
 				.trim()

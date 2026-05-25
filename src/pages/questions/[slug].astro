@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import Layout from "../../layouts/Layout.astro";
 
@@ -8,7 +8,7 @@ export async function getStaticPaths() {
    questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
    return questions.map((question, index) => ({
-      params: { slug: question.slug },
+      params: { slug: question.id },
       props: {
          question,
          prevQuestion: index > 0 ? questions[index - 1] : null,
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 }
 
 const { question, prevQuestion, nextQuestion } = Astro.props;
-const { Content } = await question.render();
+const { Content } = await render(question);
 
 const date = new Date(question.data.date).toLocaleDateString("en-US", {
    weekday: "long",
@@ -41,7 +41,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
                {
                   prevQuestion && (
                         <a
-                           href={`/questions/${prevQuestion.slug}`}
+                           href={`/questions/${prevQuestion.id}`}
                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex items-center gap-2"
                         >
                            <Icon name="lucide:chevron-left" class="size-4" />
@@ -59,7 +59,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
                {
                   nextQuestion && (
                         <a
-                           href={`/questions/${nextQuestion.slug}`}
+                           href={`/questions/${nextQuestion.id}`}
                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex items-center gap-2"
                         >
                            <span class="text-sm text-muted-foreground">
