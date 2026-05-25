@@ -5,9 +5,7 @@
       "includes": ["**/*.astro"],
       "linter": {
         "rules": {
-          "nursery": {
-            "useSortedClasses": "off"
-          },
+          "nursery": { "useSortedClasses": "off" },
           "style": {
             "useFilenamingConvention": "off"
           }

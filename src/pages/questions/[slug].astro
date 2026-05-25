@@ -31,82 +31,199 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
 <Layout
   title={`Question #${question.data.number} - Cassidoo's Interview Questions`}
 >
-  <div
-    class="max-w-none rounded-xl border shadow bg-card text-card-foreground prose prose-slate"
-  >
-    <div class="p-8">
-      <div
-        class="grid grid-cols-3 items-center pb-6 mb-6 border-b not-prose border-slate-100"
-      >
-        <div class="justify-self-start">
+  <article class="question-detail">
+    <div class="question-body">
+      <nav class="question-nav" aria-label="Question navigation">
+        <div>
           {prevQuestion && (
                      <a
-                        class="flex inline-flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        class="button previous-next"
                         href={`/questions/${prevQuestion.id}`}
                      >
-                        <Icon class="size-4" name="lucide:chevron-left" />
-                        <span class="text-sm text-muted-foreground">
+                        <Icon class="icon" name="lucide:chevron-left" />
+                        <span class="muted-number">
                            #{prevQuestion.data.number}
                         </span>
                      </a>
                   )}
         </div>
-        <div class="justify-self-center">
-          <a
-            href="/"
-            class="inline-flex justify-center items-center px-3 h-9 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
-            >All questions</a
-          >
+        <div>
+          <a href="/" class="button all-questions">All questions</a>
         </div>
-        <div class="justify-self-end">
+        <div>
           {nextQuestion && (
                      <a
-                        class="flex inline-flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        class="button previous-next"
                         href={`/questions/${nextQuestion.id}`}
                      >
-                        <span class="text-sm text-muted-foreground">
+                        <span class="muted-number">
                            #{nextQuestion.data.number}
                         </span>
-                        <Icon class="size-4" name="lucide:chevron-right" />
+                        <Icon class="icon" name="lucide:chevron-right" />
                      </a>
                   )}
         </div>
-      </div>
+      </nav>
 
-      <div class="flex justify-between items-center mb-6 not-prose">
-        <span
-          class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-indigo-100"
-        >
-          #{question.data.number}
-        </span>
-        <time class="text-sm text-slate-500">{date}</time>
+      <div class="question-meta">
+        <span class="question-badge"> #{question.data.number} </span>
+        <time>{date}</time>
       </div>
 
       <div class="markdown-content">
         <Content />
       </div>
 
-      <div class="pt-6 mt-8 border-t border-slate-100 not-prose">
-        <!-- Bottom links -->
-        <div class="flex justify-between items-center">
-          <a
-            href="/"
-            class="inline-flex justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline"
-            >← Back to all questions</a
-          >
+      <footer class="question-links">
+        <div>
+          <a href="/" class="button back-link">← Back to all questions</a>
           <a
             href={question.data.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex justify-center items-center px-3 h-9 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+            class="button all-questions"
           >
             View original newsletter ↗
           </a>
         </div>
-      </div>
+      </footer>
     </div>
-  </div>
+  </article>
 </Layout>
+
+<style>
+  .question-detail {
+    max-width: none;
+    color: var(--card-foreground);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 0.125rem);
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.1);
+  }
+
+  .question-body {
+    padding: 2rem;
+  }
+
+  .question-nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .question-nav > :nth-child(2) {
+    justify-self: center;
+  }
+
+  .question-nav > :last-child {
+    justify-self: end;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.25rem;
+    padding: 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: calc(var(--radius) - 0.125rem);
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .button:hover {
+    color: var(--accent-foreground);
+    background: var(--accent);
+  }
+
+  .button:focus-visible,
+  .question-badge:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .previous-next {
+    gap: 0.5rem;
+    height: 2.5rem;
+    padding: 0 1rem;
+  }
+
+  .icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .muted-number {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+
+  .question-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .question-meta time {
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+
+  .question-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #4f46e5;
+    background: #eef2ff;
+    border-radius: calc(var(--radius) - 0.125rem);
+  }
+
+  .question-badge:hover {
+    background: #e0e7ff;
+  }
+
+  .question-links {
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .question-links > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .back-link {
+    height: 2.5rem;
+    padding: 0 1rem;
+    color: var(--primary);
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+    background: transparent;
+  }
+
+  @media (max-width: 36rem) {
+    .question-body {
+      padding: 1.25rem;
+    }
+
+    .previous-next {
+      padding: 0 0.5rem;
+    }
+  }
+</style>
 
 <style is:global>
   /* Custom styling for the markdown content to look nice */
