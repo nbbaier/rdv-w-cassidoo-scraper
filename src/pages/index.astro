@@ -7,18 +7,18 @@ const questions = await getCollection("questions");
 questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const questionsData = questions.map((q) => ({
-   slug: q.id,
-   number: q.data.number,
-   date: q.data.date.toISOString().split("T")[0],
-   excerpt: (q.body ?? "")
-      .replace(/[#*[\]()]/g, "")
-      .replace(/`/g, "")
-      .slice(0, 150),
-   year: q.data.date.getFullYear(),
+	slug: q.id,
+	number: q.data.number,
+	date: q.data.date.toISOString().split("T")[0],
+	excerpt: (q.body ?? "")
+		.replace(/[#*[\]()]/g, "")
+		.replace(/`/g, "")
+		.slice(0, 150),
+	year: q.data.date.getFullYear(),
 }));
 
 const years = [
-   ...new Set(questions.map((q) => q.data.date.getFullYear())),
+	...new Set(questions.map((q) => q.data.date.getFullYear())),
 ].sort((a, b) => b - a);
 ---
 

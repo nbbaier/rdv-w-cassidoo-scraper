@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import { Parser } from "htmlparser2";
 
 const html = readFileSync("index.html", "utf-8");
