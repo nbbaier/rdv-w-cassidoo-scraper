@@ -28,7 +28,7 @@ bun run check                # Astro type / content-schema check
 bunx biome check . --write   # Lint + format
 
 bun run scrape               # Fetch RSS (COUNT=1000 default), write any missing question files
-COUNT=20 bun run scrape      # Weekly-delta mode (matches CI)
+COUNT=20 bun run scrape      # Smaller window — only safe if every item already exists on disk
 ```
 
 ## Code Style
@@ -48,7 +48,7 @@ Biome handles formatting and linting (`biome.json`):
 Single-step pipeline driven by Buttondown's RSS feed (see [docs/adr/0001-rss-only-ingestion.md](docs/adr/0001-rss-only-ingestion.md)):
 
 1. **`scraper/scrape.ts`**
-   - Fetches `https://buttondown.com/cassidoo/rss?count=${COUNT}` (default 1000; weekly CI uses 20).
+   - Fetches `https://buttondown.com/cassidoo/rss?count=${COUNT}` (default 1000; weekly CI relies on this default).
    - Parses with `feedsmith`. Each `<item>` carries a full HTML body in `<description>`.
    - Sorts items oldest-first; assigns `number = index + 1`.
    - Skips items where `src/content/questions/{date}.md` already exists.
@@ -96,12 +96,12 @@ docs/adr/              # Architectural decisions (start at 0001)
 `.github/workflows/weekly-scrape.yml`:
 
 - Runs every Monday at 03:00 UTC (and on `workflow_dispatch`).
-- Steps: checkout → setup Bun → `bun install` → `COUNT=20 bun run scrape` → commit any new files in `src/content/questions/`.
+- Steps: checkout → setup Bun → `bun install` → `bun run scrape` (uses the default `COUNT=1000`) → commit any new files in `src/content/questions/`.
 
 ## Important Implementation Details
 
 - **Re-scraping**: `scraper/scrape.ts` skips files that already exist. To re-extract an issue, delete the corresponding `src/content/questions/{date}.md` first.
-- **Numbering**: `number` is a synthetic ordinal — index of the item in the oldest-first sort across all items the feed returned. Stable for the existing backlog; the next new issue becomes `number + 1`.
+- **Numbering**: `number` is a synthetic ordinal — index of the item in the oldest-first sort across all items the feed returned. This is why CI uses the default `COUNT=1000`: if the feed window doesn't cover the entire archive, new issues are numbered relative to the window (e.g. `20`) instead of continuing the global sequence (e.g. `458`).
 - **Date format**: ISO 8601 `YYYY-MM-DD`, derived from the RSS `<pubDate>`.
 - **Dependencies**:
    - `feedsmith` — RSS parser

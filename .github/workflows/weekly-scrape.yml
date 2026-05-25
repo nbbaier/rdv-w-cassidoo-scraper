@@ -26,9 +26,11 @@ jobs:
            run: bun install
 
          - name: Run scraper
+           # COUNT defaults to 1000 (full archive) so `number = i + 1` indexes
+           # against the entire history; a smaller window would assign new
+           # issues a number from the window (e.g. 20) instead of continuing
+           # the sequence (e.g. 458).
            run: bun run scrape
-           env:
-              COUNT: "20"
 
          - name: Check for changes
            id: git-check
