@@ -12,6 +12,7 @@ This is a static web archive of interview questions from Cassidy Williams' (Cass
 ## Runtime & Package Manager
 
 This project exclusively uses **Bun** (not Node.js, npm, or pnpm):
+
 - Run scripts: `bun run <script>`
 - Install dependencies: `bun install`
 - Execute files: `bun <file.ts>`
@@ -19,6 +20,7 @@ This project exclusively uses **Bun** (not Node.js, npm, or pnpm):
 ## Common Commands
 
 ### Development
+
 ```bash
 bun run dev          # Start Astro dev server
 bun run build        # Build static site
@@ -27,14 +29,16 @@ bun run check        # Run Astro type checking
 ```
 
 ### Scraping
+
 ```bash
-bun run scrape       # Crawl Buttondown archive, update scraper/data/data.json
-bun run generate     # Generate markdown files from scraped data
+bun run scrape              # Fetch RSS (count=20 by default), write markdown for any new issues
+COUNT=1000 bun run scrape   # One-time backfill across the full archive
 ```
 
 ## Code Style
 
 Formatting and linting use **Biome** (not Prettier/ESLint):
+
 - Indentation: tabs (not spaces)
 - Quote style: double quotes
 - Import organization: automatic via Biome assist
@@ -43,41 +47,39 @@ Formatting and linting use **Biome** (not Prettier/ESLint):
 
 ### Scraper Workflow
 
-1. **Discovery** (`scraper/scrape.ts`):
-   - Crawls Buttondown archive pages (currently pages 1-9)
-   - Uses `linkedom` to parse HTML
-   - Extracts metadata (URL, date, issue number) into `scraper/data/data.json`
+Single-step pipeline driven by the Buttondown RSS feed (see [docs/adr/0001-rss-only-ingestion.md](docs/adr/0001-rss-only-ingestion.md)):
 
-2. **Extraction** (`scraper/index.ts` + `scraper/utils.ts`):
-   - Reads `data.json` and fetches full newsletter HTML via `JSDOM.fromURL()`
-   - Identifies "Interview Question" section using `wrapContentBetweenHRs()` (wraps content between `<hr>` tags)
-   - Converts HTML to Markdown using `defuddle`
-   - Removes links with `remark-unlink`
-   - Writes markdown files to `src/content/questions/` with frontmatter (url, date, number)
+1. **`scraper/scrape.ts`**:
+   - Fetches `https://buttondown.com/cassidoo/rss?count=${COUNT}` (default 1000, weekly CI uses 20).
+   - Parses with `feedsmith`. Each `<item>` carries a full HTML body in `<description>`.
+   - Sorts items oldest-first, assigns `number = index + 1`.
+   - For each item, skips if `src/content/questions/{date}.md` already exists.
+   - Logs a summary line at the end: processed / written / skipped (exists) / skipped (no q) / failed.
 
-3. **Key Parsing Logic**:
-   - `wrapContentBetweenHRs()`: Wraps content between consecutive `<hr>` tags in `.hr-section` divs
-   - Questions identified by finding `.hr-section` containing `<h2>` with "interview" in text
-   - HTML files temporarily saved to `scraper/data/html/` for debugging
+2. **`scraper/extract.ts`** (`extractQuestion`):
+   - Wraps the description HTML in a minimal HTML doc and parses with JSDOM.
+   - `wrapContentBetweenHRs`: wraps content between consecutive `<hr>` tags in `.hr-section` divs.
+   - Finds the `.hr-section` whose `<h2>` contains "interview".
+   - Picks the longest `<strong>` (>30 chars) as the question; falls back to plain-text-after-h2 for ~2017-era issues.
+   - Walks following siblings (examples, code blocks) until "submit your answers" / "replying to this email".
+   - Wraps the assembled fragment in a full HTML doc, runs through `defuddle` → markdown, then `remark-unlink` to strip links.
+   - Returns `{ status: "ok" | "skipped" | "failed", ... }`.
 
 ### Frontend Architecture
 
 - **Framework**: Astro 5 (static site generation)
 - **Styling**: Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
 - **Content**: Astro Content Collections (`src/content/questions/`)
-  - Schema: `{ url: string, date: Date, number: number }`
-  - Files: markdown with frontmatter (`YYYY-MM-DD.md`)
+   - Schema: `{ url: string, date: Date, number: number }`
+   - Files: markdown with frontmatter (`YYYY-MM-DD.md`)
 - **Icons**: `astro-icon` package
 
 ### File Structure
+
 ```
 scraper/
-  ├── scrape.ts        # Archive crawler
-  ├── index.ts         # Markdown generator
-  ├── utils.ts         # Parsing utilities (wrapContentBetweenHRs, getQuestion)
-  └── data/
-      ├── data.json    # Newsletter metadata
-      └── html/        # Temporary HTML cache
+  ├── scrape.ts        # RSS fetch + driver loop
+  └── extract.ts       # extractQuestion + HTML→markdown plumbing
 src/
   ├── content/
   │   ├── config.ts    # Content collection schema
@@ -94,6 +96,7 @@ src/
 ## GitHub Actions
 
 **Weekly Scrape** (`.github/workflows/weekly-scrape.yml`):
+
 - Runs: Every Monday at 3:00 AM UTC (or manual trigger)
 - Process: scrape → generate → commit new markdown files
 - Only commits if new questions found
@@ -101,18 +104,21 @@ src/
 ## Important Implementation Details
 
 ### Scraper Behavior
-- `scraper/index.ts` skips files that already exist (checks `Bun.file().exists()`)
+
+- `scraper/scrape.ts` skips files that already exist (checks `Bun.file().exists()`)
 - To re-scrape existing dates, delete the corresponding markdown file
-- Date format: ISO 8601 date string (`YYYY-MM-DD`) from `formatDate()` utility
+- Date format: ISO 8601 date string (`YYYY-MM-DD`) derived from RSS `<pubDate>`
 
 ### Content Collection
+
 - Frontmatter `date` must be parseable as `Date` by Zod schema
 - Files named by date, but slug can be anything (Astro derives from filename)
 - Newsletter numbers are non-sequential due to archive gaps
 
 ### Dependencies
-- `linkedom`: Lightweight DOM for initial archive parsing
-- `jsdom`: Full DOM for newsletter content fetching
+
+- `feedsmith`: RSS parser
+- `jsdom`: DOM for parsing each item's description HTML
 - `defuddle`: HTML-to-Markdown converter
 - `remark`/`remark-unlink`: Markdown processing pipeline
 
