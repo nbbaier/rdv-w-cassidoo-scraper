@@ -2,16 +2,16 @@
 import { Icon } from "astro-icon/components";
 
 interface Question {
-   slug: string;
-   number: number;
-   date: string;
-   excerpt: string;
-   year: number;
+	slug: string;
+	number: number;
+	date: string;
+	excerpt: string;
+	year: number;
 }
 
 interface Props {
-   questions: Question[];
-   years: number[];
+	questions: Question[];
+	years: number[];
 }
 
 const { questions, years } = Astro.props;

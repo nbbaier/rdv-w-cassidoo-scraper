@@ -1,6 +1,6 @@
 // analyze.ts
 
-import { readdir } from "fs/promises";
+import { readdir } from "node:fs/promises";
 import { JSDOM } from "jsdom";
 
 const htmlDir = "./scraper/data/html";
