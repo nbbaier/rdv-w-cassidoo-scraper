@@ -90,7 +90,11 @@ src/
   ├── layouts/Layout.astro
   ├── components/QuestionsApp.astro
   └── styles/
-docs/adr/              # Architectural decisions (start at 0001)
+docs/
+  ├── adr/               # Architectural decisions (start at 0001)
+  ├── agents/            # Agent skill configuration (issue tracker, triage labels, domain docs)
+  ├── plan.md            # Astro frontend build plan (completed)
+  └── roadmap/           # 2026 strategic roadmap
 ```
 
 ## Automation
@@ -114,4 +118,18 @@ docs/adr/              # Architectural decisions (start at 0001)
 ## Testing & Validation
 
 There is no test suite. Validation = running `bun run check` (Ultracite/Biome) and `bunx astro check` (content schema + TypeScript), plus eyeballing the summary line printed at the end of `bun run scrape` (a non-zero "failed" count generally means an issue without an interview segment, not a parser regression — but worth verifying).
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in this repo's GitHub Issues (`nbbaier/rdv-w-cassidoo-scraper`); external PRs are not a triage surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Uses the default triage label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
