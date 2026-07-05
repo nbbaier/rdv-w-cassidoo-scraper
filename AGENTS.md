@@ -4,7 +4,7 @@ Source of truth for any agent working in this repo.
 
 ## Project Overview
 
-A static web archive of interview questions from Cassidy Williams' (Cassidoo) weekly newsletter. Two parts:
+A static web archive of interview questions from Cassidy Williams' (Cassidoo) weekly newsletter — a public, read-only archive, not a practice platform or product (see [CONTEXT.md](./CONTEXT.md) for identity and terms, [docs/launch.md](docs/launch.md) for the launch plan). Two parts:
 
 1. **Scraper** (`scraper/`): pulls newsletter content from Buttondown's RSS feed and writes one markdown file per issue.
 2. **Frontend** (`src/`): Astro static site that lists and renders the questions.
@@ -93,8 +93,8 @@ src/
 docs/
   ├── adr/               # Architectural decisions (start at 0001)
   ├── agents/            # Agent skill configuration (issue tracker, triage labels, domain docs)
-  ├── plan.md            # Astro frontend build plan (completed)
-  └── roadmap/           # 2026 strategic roadmap
+  └── launch.md          # Launch plan and post-launch queue
+CONTEXT.md               # Domain glossary — project identity and canonical terms
 ```
 
 ## Automation

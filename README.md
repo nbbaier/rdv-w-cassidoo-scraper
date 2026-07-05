@@ -2,10 +2,12 @@
 
 A static, searchable web archive of the interview questions from Cassidy Williams' (Cassidoo) [weekly newsletter](https://buttondown.com/cassidoo/). Backlog and weekly updates are pulled from the newsletter's RSS feed and rendered as an Astro static site.
 
+> **Status:** pre-launch. The site is not deployed yet — see [docs/launch.md](docs/launch.md) for the plan.
+
 ## How it works
 
 - **Scraper (`scraper/`)** — fetches `https://buttondown.com/cassidoo/rss?count=N` in a single request, extracts the "Interview question of the week" segment from each item's HTML body, and writes one markdown file per issue to `src/content/questions/`. A GitHub Action (`.github/workflows/weekly-scrape.yml`) runs this every Monday to pick up the latest issue. See [docs/adr/0001-rss-only-ingestion.md](docs/adr/0001-rss-only-ingestion.md) for the design rationale.
-- **Frontend (`src/`)** — Astro 5 static site with Tailwind CSS v4, loading questions via Astro Content Collections and offering client-side search/filter.
+- **Frontend (`src/`)** — Astro 6 static site with Tailwind CSS v4, loading questions via Astro Content Collections and offering client-side search/filter.
 
 ## Quick start
 
