@@ -107,6 +107,7 @@ CONTEXT.md               # Domain glossary — project identity and canonical te
 ## Important Implementation Details
 
 - **Re-scraping**: `scraper/scrape.ts` skips files that already exist. To re-extract an issue, delete the corresponding `src/content/questions/{date}.md` first.
+- **Six hand-written question files — do NOT delete**: `2017-10-01`, `2017-10-09`, `2017-10-16`, `2017-10-23`, `2018-01-22`, `2018-07-16`. Buttondown's RSS HTML for these issues closes wrapper `<div>`s before the answer's `<pre>` block, splitting the interview section across DOM levels; `extractQuestion` sees only the answer intro and misclassifies them as `answers-only`. The delete-to-rescrape contract does not hold for them — a re-scrape skips them again instead of regenerating. Full diagnosis and durable-fix options: [issue #17](https://github.com/nbbaier/rdv-w-cassidoo-scraper/issues/17).
 - **Numbering**: `number` is a synthetic ordinal — index of the item in the oldest-first sort across all items the feed returned. This is why CI uses the default `COUNT=1000`: if the feed window doesn't cover the entire archive, new issues are numbered relative to the window (e.g. `20`) instead of continuing the global sequence (e.g. `458`).
 - **Date format**: ISO 8601 `YYYY-MM-DD`, derived from the RSS `<pubDate>`.
 - **Key dependencies**:

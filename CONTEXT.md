@@ -13,7 +13,7 @@ The "interview question of the week" segment extracted from an Issue — the pro
 _Avoid_: problem, challenge, exercise
 
 **Answers-only Issue**:
-An Issue containing only answers to a previous Question and no new one; the scraper skips these deliberately (six exist, all 2017–2018).
+An Issue containing only answers to a previous Question and no new one. No genuine example is currently known — the six Issues once believed to be answers-only all contained Questions.
 
 **Title**:
 A short human-written-quality summary of a Question, added during Enrichment (not present in the newsletter itself).
