@@ -246,6 +246,32 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   <div id="no-results" class="hidden py-12 text-center text-slate-500">
     No questions found matching your search.
   </div>
+
+  <template id="question-card-template">
+    <a class="question-card-link">
+      <div
+        class="rounded-xl border shadow transition-all cursor-pointer group bg-card text-card-foreground hover:border-indigo-300 hover:shadow-md"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-2">
+            <div
+              class="question-card-number inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              #0
+            </div>
+            <time class="question-card-date text-sm text-slate-400"
+              >0000-00-00</time
+            >
+          </div>
+          <div
+            class="question-card-excerpt line-clamp-2 text-slate-700 group-hover:text-slate-900"
+          >
+            ...
+          </div>
+        </div>
+      </div>
+    </a>
+  </template>
 </div>
 
 <script is:inline define:vars={{ questions, initialPageSize }}>
@@ -270,6 +296,9 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   const showingRangeMobileEl = document.getElementById("showing-range-mobile");
   const questionsListEl = document.getElementById("questions-list");
   const noResultsEl = document.getElementById("no-results");
+  const questionCardTemplate = document.getElementById(
+    "question-card-template"
+  );
 
   // Custom Select Logic
   function setupCustomSelect(triggerId, dropdownId, inputId, onSelect) {
@@ -370,21 +399,14 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   );
 
   function renderQuestionCard(q) {
-    return [
-      `<a href="/questions/${q.slug}">`,
-      '<div class="rounded-xl border shadow transition-all cursor-pointer group bg-card text-card-foreground hover:border-indigo-300 hover:shadow-md">',
-      '<div class="p-6">',
-      '<div class="flex justify-between items-start mb-2">',
-      '<div class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">',
-      `#${q.number}`,
-      "</div>",
-      `<time class="text-sm text-slate-400">${q.date}</time>`,
-      "</div>",
-      `<div class="line-clamp-2 text-slate-700 group-hover:text-slate-900">${q.excerpt}...</div>`,
-      "</div>",
-      "</div>",
-      "</a>",
-    ].join("");
+    const card = questionCardTemplate.content.cloneNode(true);
+    const link = card.querySelector(".question-card-link");
+    link.href = `/questions/${q.slug}`;
+    card.querySelector(".question-card-number").textContent = `#${q.number}`;
+    card.querySelector(".question-card-date").textContent = q.date;
+    card.querySelector(".question-card-excerpt").textContent =
+      `${q.excerpt}...`;
+    return card.firstElementChild;
   }
 
   // Load search index
@@ -419,13 +441,13 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
 
     // Render Questions
     if (paginatedQuestions.length > 0) {
-      questionsListEl.innerHTML = paginatedQuestions
-        .map(renderQuestionCard)
-        .join("");
+      questionsListEl.replaceChildren(
+        ...paginatedQuestions.map(renderQuestionCard)
+      );
       questionsListEl.classList.remove("hidden");
       noResultsEl.classList.add("hidden");
     } else {
-      questionsListEl.innerHTML = "";
+      questionsListEl.replaceChildren();
       questionsListEl.classList.add("hidden");
       noResultsEl.classList.remove("hidden");
     }
