@@ -134,3 +134,14 @@ Uses the default triage label vocabulary (needs-triage, needs-info, ready-for-ag
 
 Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
+## Learned User Preferences
+
+- Do not use TypeScript type syntax in Astro `is:inline` scripts; use JSDoc casts instead.
+- Prefer `for...of` over `forEach` in inline scripts (Biome `noForEach`).
+
+## Learned Workspace Facts
+
+- Biome reformats nested multiline template literals inside `.astro` `<script>` blocks on every `bun run fix`, adding indentation each pass; build client HTML with single-line string arrays joined by `.join("")` or `<template>` cloning instead.
+- Biome `useSortedClasses` often does not auto-fix Tailwind class order in `.astro` files; apply Biome's suggested order manually.
+- `src/components/QuestionsApp.astro` has a Biome override disabling `useFilenamingConvention` (PascalCase is standard for Astro components).
+

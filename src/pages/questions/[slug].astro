@@ -40,16 +40,16 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
       >
         <div class="justify-self-start">
           {prevQuestion && (
-                     <a
-                        class="flex inline-flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                        href={`/questions/${prevQuestion.id}`}
-                     >
-                        <Icon class="size-4" name="lucide:chevron-left" />
-                        <span class="text-sm text-muted-foreground">
-                           #{prevQuestion.data.number}
-                        </span>
-                     </a>
-                  )}
+   <a
+      class="flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+      href={`/questions/${prevQuestion.id}`}
+   >
+      <Icon class="size-4" name="lucide:chevron-left" />
+      <span class="text-sm text-muted-foreground">
+         #{prevQuestion.data.number}
+      </span>
+   </a>
+)}
         </div>
         <div class="justify-self-center">
           <a
@@ -60,16 +60,16 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
         </div>
         <div class="justify-self-end">
           {nextQuestion && (
-                     <a
-                        class="flex inline-flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                        href={`/questions/${nextQuestion.id}`}
-                     >
-                        <span class="text-sm text-muted-foreground">
-                           #{nextQuestion.data.number}
-                        </span>
-                        <Icon class="size-4" name="lucide:chevron-right" />
-                     </a>
-                  )}
+   <a
+      class="flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+      href={`/questions/${nextQuestion.id}`}
+   >
+      <span class="text-sm text-muted-foreground">
+         #{nextQuestion.data.number}
+      </span>
+      <Icon class="size-4" name="lucide:chevron-right" />
+   </a>
+)}
         </div>
       </div>
 
