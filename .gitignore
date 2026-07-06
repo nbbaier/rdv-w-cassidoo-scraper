@@ -1,6 +1,8 @@
 _.log
 .astro/
 .cache
+.claude/settings.local.json
+.claude/worktrees
 .cursor/hooks/state/continual-learning*
 .DS_Store
 .env
