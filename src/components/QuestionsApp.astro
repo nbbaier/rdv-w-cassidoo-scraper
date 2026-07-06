@@ -79,19 +79,19 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
               All Years
             </div>
             {years.map((year) => (
-                        <div
-                           class="flex relative items-center py-1.5 pr-2 pl-8 w-full text-sm rounded-sm cursor-pointer outline-none select-none option-item hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50"
-                           data-value={year}
-                        >
-                           <span class="flex absolute left-2 justify-center items-center w-3.5 h-3.5">
-                              <Icon
-                                 class="w-4 h-4 opacity-0 check-icon"
-                                 name="lucide:check"
-                              />
-                           </span>
-                           {year}
-                        </div>
-                     ))}
+   <div
+      class="flex relative items-center py-1.5 pr-2 pl-8 w-full text-sm rounded-sm cursor-pointer outline-none select-none option-item hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50"
+      data-value={year}
+   >
+      <span class="flex absolute left-2 justify-center items-center w-3.5 h-3.5">
+         <Icon
+            class="w-4 h-4 opacity-0 check-icon"
+            name="lucide:check"
+         />
+      </span>
+      {year}
+   </div>
+))}
           </div>
         </div>
         <input type="hidden" id="year-select" value="">
@@ -126,19 +126,19 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
           >
             <div class="max-h-[300px] overflow-y-auto p-1">
               {[10, 25, 50, 100].map((size) => (
-                           <div
-                              class="flex relative items-center py-1.5 pr-2 pl-8 w-full text-sm rounded-sm cursor-pointer outline-none select-none option-item hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50"
-                              data-value={size}
-                           >
-                              <span class="flex absolute left-2 justify-center items-center w-3.5 h-3.5">
-                                 <Icon
-                                    class={`check-icon h-4 w-4 ${size === 10 ? "" : "opacity-0"}`}
-                                    name="lucide:check"
-                                 />
-                              </span>
-                              {size}
-                           </div>
-                        ))}
+      <div
+         class="flex relative items-center py-1.5 pr-2 pl-8 w-full text-sm rounded-sm cursor-pointer outline-none select-none option-item hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50"
+         data-value={size}
+      >
+         <span class="flex absolute left-2 justify-center items-center w-3.5 h-3.5">
+            <Icon
+               class={`check-icon h-4 w-4 ${size === 10 ? "" : "opacity-0"}`}
+               name="lucide:check"
+            />
+         </span>
+         {size}
+      </div>
+   ))}
             </div>
           </div>
           <input type="hidden" id="page-size-select" value="10">
@@ -224,24 +224,24 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   <!-- Questions List -->
   <div id="questions-list" class="flex flex-col gap-2">
     {initialQuestions.map((question) => (
-            <a href={`/questions/${question.slug}`}>
-               <div class="rounded-xl border shadow transition-all cursor-pointer group bg-card text-card-foreground hover:border-indigo-300 hover:shadow-md">
-                  <div class="p-6">
-                     <div class="flex justify-between items-start mb-2">
-                        <div class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                           #{question.number}
-                        </div>
-                        <time class="text-sm text-slate-400">
-                           {question.date}
-                        </time>
-                     </div>
-                     <div class="line-clamp-2 text-slate-700 group-hover:text-slate-900">
-                        {question.excerpt}...
-                     </div>
-                  </div>
-               </div>
-            </a>
-         ))}
+<a href={`/questions/${question.slug}`}>
+<div class="rounded-xl border shadow transition-all cursor-pointer group bg-card text-card-foreground hover:border-indigo-300 hover:shadow-md">
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+   <div class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+      #{question.number}
+   </div>
+   <time class="text-sm text-slate-400">
+      {question.date}
+   </time>
+</div>
+<div class="line-clamp-2 text-slate-700 group-hover:text-slate-900">
+   {question.excerpt}...
+</div>
+</div>
+</div>
+</a>
+))}
   </div>
   <div id="no-results" class="hidden py-12 text-center text-slate-500">
     No questions found matching your search.
@@ -369,6 +369,24 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
     }
   );
 
+  function renderQuestionCard(q) {
+    return [
+      `<a href="/questions/${q.slug}">`,
+      '<div class="rounded-xl border shadow transition-all cursor-pointer group bg-card text-card-foreground hover:border-indigo-300 hover:shadow-md">',
+      '<div class="p-6">',
+      '<div class="flex justify-between items-start mb-2">',
+      '<div class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">',
+      `#${q.number}`,
+      "</div>",
+      `<time class="text-sm text-slate-400">${q.date}</time>`,
+      "</div>",
+      `<div class="line-clamp-2 text-slate-700 group-hover:text-slate-900">${q.excerpt}...</div>`,
+      "</div>",
+      "</div>",
+      "</a>",
+    ].join("");
+  }
+
   // Load search index
   fetch("/search.json")
     .then((res) => res.json())
@@ -402,26 +420,7 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
     // Render Questions
     if (paginatedQuestions.length > 0) {
       questionsListEl.innerHTML = paginatedQuestions
-        .map(
-          (q) =>
-            `
-                                                                                   <a href="/questions/${q.slug}">
-                                                                                     <div class="rounded-xl border shadow transition-all cursor-pointer group bg-card text-card-foreground hover:border-indigo-300 hover:shadow-md">
-                                                                                       <div class="p-6">
-                                                                                         <div class="flex justify-between items-start mb-2">
-                                                                                           <div class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-md border border-transparent transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                                                                                             #${q.number}
-                                                                                           </div>
-                                                                                           <time class="text-sm text-slate-400">${q.date}</time>
-                                                                                         </div>
-                                                                                         <div class="line-clamp-2 text-slate-700 group-hover:text-slate-900">
-                                                                                           ${q.excerpt}...
-                                                                                         </div>
-                                                                                       </div>
-                                                                                     </div>
-                                                                                   </a>
-                                                                                 `
-        )
+        .map(renderQuestionCard)
         .join("");
       questionsListEl.classList.remove("hidden");
       noResultsEl.classList.add("hidden");
