@@ -8,7 +8,6 @@ questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const questionsData = questions.map((q) => ({
   slug: q.id,
-  number: q.data.number,
   date: q.data.date.toISOString().split("T")[0],
   excerpt: (q.body ?? "")
     .replace(/[#*[\]()]/g, "")
