@@ -66,7 +66,7 @@ Single-step pipeline driven by Buttondown's RSS feed (see [docs/adr/0001-rss-onl
 
 ### Frontend
 
-- **Framework**: Astro 6 (static site generation).
+- **Framework**: Astro 7 (static site generation).
 - **Styling**: Tailwind CSS v4 via `@tailwindcss/vite`; global styles in `src/styles/`.
 - **Content**: Astro Content Collections, loaded from `src/content/questions/*.md`.
    - Schema (`src/content.config.ts`): `{ url: string, date: Date, number: number }`.
@@ -144,4 +144,3 @@ Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agent
 - Biome reformats nested multiline template literals inside `.astro` `<script>` blocks on every `bun run fix`, adding indentation each pass; build client HTML with single-line string arrays joined by `.join("")` or `<template>` cloning instead.
 - Biome `useSortedClasses` often does not auto-fix Tailwind class order in `.astro` files; apply Biome's suggested order manually.
 - `src/components/QuestionsApp.astro` has a Biome override disabling `useFilenamingConvention` (PascalCase is standard for Astro components).
-

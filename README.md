@@ -7,7 +7,7 @@ A static, searchable web archive of the interview questions from Cassidy William
 ## How it works
 
 - **Scraper (`scraper/`)** — fetches `https://buttondown.com/cassidoo/rss?count=N` in a single request, extracts the "Interview question of the week" segment from each item's HTML body, and writes one markdown file per issue to `src/content/questions/`. A GitHub Action (`.github/workflows/weekly-scrape.yml`) runs this every Monday to pick up the latest issue. See [docs/adr/0001-rss-only-ingestion.md](docs/adr/0001-rss-only-ingestion.md) for the design rationale.
-- **Frontend (`src/`)** — Astro 6 static site with Tailwind CSS v4, loading questions via Astro Content Collections and offering client-side search/filter.
+- **Frontend (`src/`)** — Astro 7 static site with Tailwind CSS v4, loading questions via Astro Content Collections and offering client-side search/filter.
 
 ## Quick start
 

@@ -7,7 +7,7 @@ What this project is: a public, read-only archive of Cassidoo's weekly interview
 ## Launch cut, in order
 
 1. **Note to Cassidy** — gate for everything below. Describe the intent (attributed, free, read-only archive with a subscribe link on every page) and confirm she's comfortable before sinking effort in.
-2. **Enrichment** — build `bun run enrich` per [ADR 0002](adr/0002-enrichment-as-separate-idempotent-pass.md): controlled topic vocabulary frozen as a zod enum in `content.config.ts`, titles + topics backfilled across all 457 questions with a cheap model, step added after `scrape` in the weekly workflow. Fields stay optional; UI degrades gracefully.
+2. **Enrichment** — build `bun run enrich` per [ADR 0002](adr/0002-enrichment-as-separate-idempotent-pass.md): controlled topic vocabulary frozen as a zod enum in `content.config.ts`, titles + topics backfilled across the existing question corpus with a cheap model, step added after `scrape` in the weekly workflow. Fields stay optional; UI degrades gracefully. The corpus count changes weekly as the Monday scrape adds new questions.
 3. **UI** — titles on cards and question pages; topic filter beside the year filter; search index covers full question text + title (substring matching stays); `number` removed from display (date is the public identity); attribution + subscribe link on every question page and in the footer.
 4. **Deploy** — Cloudflare, deploy-on-push from `main`, so the Monday scrape commit auto-publishes. Update the README when live.
 
