@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Orb setup for Cassidoo interview questions archive.
+# This repo needs only Bun (preinstalled in orbs) and `bun install`.
+
+cd "$(dirname "$BASH_SOURCE")/.."
+
+echo "=== [setup] Starting at $(date -Is) ==="
+
+# --- Toolchain ---------------------------------------------------------------
+if ! command -v bun >/dev/null 2>&1; then
+  echo "[setup] ERROR: bun is not on PATH" >&2
+  exit 1
+fi
+echo "[setup] bun $(bun --version) at $(command -v bun)"
+
+# --- Dependencies ------------------------------------------------------------
+echo "[setup] Installing dependencies…"
+t0=$SECONDS
+bun install --frozen-lockfile
+echo "[setup] bun install done in ${SECONDS}s"
+
+echo "=== [setup] Done at $(date -Is) ==="

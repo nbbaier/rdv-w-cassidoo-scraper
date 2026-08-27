@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Orb resume — fast, idempotent checks after orb wake.
+# This repo has no databases, tunnels, or auth to reconnect.
+# Just verify the dependency install is still intact.
+
+cd "$(dirname "$BASH_SOURCE")/.."
+
+if [ -d node_modules ] && command -v bun >/dev/null 2>&1; then
+  echo "[resume] node_modules present, bun $(bun --version) OK"
+else
+  echo "[resume] WARNING: node_modules missing or bun unavailable — run .agents/setup" >&2
+fi

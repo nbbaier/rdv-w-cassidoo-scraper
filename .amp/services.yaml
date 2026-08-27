@@ -1,0 +1,7 @@
+services:
+  dev:
+    command: bun run dev
+    port: 4321
+    readiness:
+      path: /
+      status: 200
