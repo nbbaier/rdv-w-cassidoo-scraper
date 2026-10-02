@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import QuestionsApp from "../components/QuestionsApp.astro";
 import Layout from "../layouts/Layout.astro";
+import { plainText } from "../lib/excerpt";
 
 const questions = await getCollection("questions");
 questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -9,10 +10,7 @@ questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const questionsData = questions.map((q) => ({
   slug: q.id,
   date: q.data.date.toISOString().split("T")[0],
-  excerpt: (q.body ?? "")
-    .replace(/[#*[\]()]/g, "")
-    .replace(/`/g, "")
-    .slice(0, 150),
+  excerpt: plainText(q.body ?? "").slice(0, 150),
   year: q.data.date.getFullYear(),
 }));
 
