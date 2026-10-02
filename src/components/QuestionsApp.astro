@@ -93,7 +93,6 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
 ))}
           </div>
         </div>
-        <input type="hidden" id="year-select" value="">
       </div>
     </div>
   </div>
@@ -140,7 +139,6 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
    ))}
             </div>
           </div>
-          <input type="hidden" id="page-size-select" value="10">
         </div>
         <span class="hidden text-sm text-slate-600 sm:inline"> per page </span>
       </div>
@@ -266,8 +264,7 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
 </div>
 
 <script is:inline define:vars={{ questions, initialPageSize }}>
-  const allQuestions = questions;
-  let filteredQuestions = [...allQuestions];
+  let filteredQuestions = questions;
   let currentPage = 1;
   let pageSize = initialPageSize;
   let searchTerm = "";
@@ -277,8 +274,6 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
 
   // DOM Elements
   const searchInput = document.getElementById("search-input");
-  const yearSelectInput = document.getElementById("year-select");
-  const pageSizeSelectInput = document.getElementById("page-size-select");
   const prevPageBtn = document.getElementById("prev-page-btn");
   const nextPageBtn = document.getElementById("next-page-btn");
   const pageInput = document.getElementById("page-input");
@@ -292,13 +287,12 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   );
 
   // Custom Select Logic
-  function setupCustomSelect(triggerId, dropdownId, inputId, onSelect) {
+  function setupCustomSelect(triggerId, dropdownId, onSelect) {
     const trigger = document.getElementById(triggerId);
     const dropdown = document.getElementById(dropdownId);
-    const input = document.getElementById(inputId);
     const options = dropdown.querySelectorAll(".option-item");
 
-    if (!(trigger && dropdown && input)) {
+    if (!(trigger && dropdown)) {
       return;
     }
 
@@ -326,9 +320,6 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
         e.stopPropagation();
         const value = option.dataset.value;
         const label = option.textContent.trim();
-
-        // Update Input
-        input.value = value;
 
         // Update Trigger Label
         const valueSpan = trigger.querySelector(".value");
@@ -367,27 +358,17 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   }
 
   // Initialize Custom Selects
-  setupCustomSelect(
-    "year-select-trigger",
-    "year-select-dropdown",
-    "year-select",
-    (val) => {
-      selectedYear = val;
-      currentPage = 1;
-      filterQuestions();
-    }
-  );
+  setupCustomSelect("year-select-trigger", "year-select-dropdown", (val) => {
+    selectedYear = val;
+    currentPage = 1;
+    filterQuestions();
+  });
 
-  setupCustomSelect(
-    "page-size-trigger",
-    "page-size-dropdown",
-    "page-size-select",
-    (val) => {
-      pageSize = Number.parseInt(val, 10);
-      currentPage = 1;
-      renderQuestions();
-    }
-  );
+  setupCustomSelect("page-size-trigger", "page-size-dropdown", (val) => {
+    pageSize = Number.parseInt(val, 10);
+    currentPage = 1;
+    renderQuestions();
+  });
 
   function renderQuestionCard(q) {
     const card = questionCardTemplate.content.cloneNode(true);
@@ -444,7 +425,7 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
   }
 
   function filterQuestions() {
-    filteredQuestions = allQuestions;
+    filteredQuestions = questions;
 
     // Filter by year
     if (selectedYear) {
