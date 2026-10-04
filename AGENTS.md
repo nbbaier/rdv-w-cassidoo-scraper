@@ -4,7 +4,7 @@ Source of truth for any agent working in this repo.
 
 ## Project Overview
 
-A static web archive of interview questions from Cassidy Williams' (Cassidoo) weekly newsletter — a public, read-only archive, not a practice platform or product (see [CONTEXT.md](./CONTEXT.md) for identity and terms, [docs/launch.md](docs/launch.md) for the launch plan). Two parts:
+A static web archive of interview questions from Cassidy Williams' (Cassidoo) weekly newsletter — a public, read-only archive, not a practice platform or product (see [GLOSSARY.md](./GLOSSARY.md) for identity and terms, [docs/launch.md](docs/launch.md) for the launch plan). Two parts:
 
 1. **Scraper** (`scraper/`): pulls newsletter content from Buttondown's RSS feed and writes one markdown file per issue.
 2. **Frontend** (`src/`): Astro static site that lists and renders the questions.
@@ -94,7 +94,7 @@ docs/
   ├── adr/               # Architectural decisions (start at 0001)
   ├── agents/            # Agent skill configuration (issue tracker, triage labels, domain docs)
   └── launch.md          # Launch plan and post-launch queue
-CONTEXT.md               # Domain glossary — project identity and canonical terms
+GLOSSARY.md              # Domain glossary — project identity and canonical terms
 ```
 
 ## Automation
@@ -132,7 +132,7 @@ Uses the default triage label vocabulary (needs-triage, needs-info, ready-for-ag
 
 ### Domain docs
 
-Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: one `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
 ## Learned User Preferences
 

@@ -2,7 +2,7 @@
 
 > Tracked on GitHub Issues: spec [#11](https://github.com/nbbaier/rdv-w-cassidoo-scraper/issues/11), plans #12–#16. Step 0 below (the note to Cassidy) is deliberately *not* an issue; it hard-gates #16 (deploy) via a STOP condition.
 
-What this project is: a public, read-only archive of Cassidoo's weekly interview questions — the best way to browse and search them. Not a practice platform, community, or product (see [CONTEXT.md](../CONTEXT.md)). This supersedes the deleted 2026 roadmap (`docs/roadmap/`, in git history), which described a learning-platform vision that is no longer the goal.
+What this project is: a public, read-only archive of Cassidoo's weekly interview questions — the best way to browse and search them. Not a practice platform, community, or product (see [GLOSSARY.md](../GLOSSARY.md)). This supersedes the deleted 2026 roadmap (`docs/roadmap/`, in git history), which described a learning-platform vision that is no longer the goal.
 
 ## Launch cut, in order
 
