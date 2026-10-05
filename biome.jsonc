@@ -3,6 +3,7 @@
   "overrides": [
     {
       "includes": ["**/*.astro"],
+      "plugins": ["./biome-plugins/no-nested-multiline-template.grit"],
       "linter": {
         "rules": {
           "nursery": {

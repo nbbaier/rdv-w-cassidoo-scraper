@@ -1,0 +1,7 @@
+language js
+
+JsTemplateExpression() as $inner where {
+  $inner <: within JsTemplateElement() ,
+  $inner <: r"(?s).*\n.*",
+  register_diagnostic(span=$inner, message="Nested multi-line template literal: Biome re-indents these in .astro <script> blocks on every `bun run fix`. Build the HTML with a <template> element and cloneNode, or join single-line strings.")
+}
