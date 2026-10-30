@@ -19,21 +19,21 @@ if (format !== "rss") {
 const items = (feed.items ?? [])
   .filter((i) => i.link && i.pubDate && i.description)
   .map((i) => ({
+    date: new Date(i.pubDate as string).toISOString().slice(0, 10),
+    description: i.description as string,
     link: i.link as string,
     pubDate: i.pubDate as string,
-    description: i.description as string,
-    date: new Date(i.pubDate as string).toISOString().slice(0, 10),
   }))
   .sort((a, b) => a.date.localeCompare(b.date));
 
 console.log(`Feed returned ${items.length} items`);
 
 const totals = {
+  failed: 0,
   processed: 0,
-  written: 0,
   skipped_exists: 0,
   skipped_no_question: 0,
-  failed: 0,
+  written: 0,
 };
 
 for (const [i, item] of items.entries()) {

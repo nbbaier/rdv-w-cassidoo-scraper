@@ -10,10 +10,10 @@ export async function GET() {
       .trim();
 
     return {
-      slug: question.id,
       date: question.data.date.toISOString().split("T")[0],
       // Create a simple excerpt by removing markdown syntax and taking the first 200 chars
       excerpt: `${stripped.slice(0, 200)}...`,
+      slug: question.id,
       // Full plain-text body, lowercased, for full-text search matching
       text: stripped.toLowerCase(),
     };

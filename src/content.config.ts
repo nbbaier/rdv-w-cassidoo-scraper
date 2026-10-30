@@ -6,14 +6,14 @@ const MD_EXTENSION = /\.md$/;
 
 const questions = defineCollection({
   loader: glob({
-    pattern: "**/*.md",
     base: "./src/content/questions",
     generateId: ({ entry }) => entry.replace(MD_EXTENSION, ""),
+    pattern: "**/*.md",
   }),
   schema: z.object({
-    url: z.string().url(),
     date: z.coerce.date(),
     number: z.number(),
+    url: z.url(),
   }),
 });
 

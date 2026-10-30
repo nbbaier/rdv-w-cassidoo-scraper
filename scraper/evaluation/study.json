@@ -1,0 +1,246 @@
+{
+  "revision": "2026-10-30-v1",
+  "referenceStatus": "Agent-drafted expectations; not human-approved ground truth.",
+  "titleModel": "claude-haiku-5-5",
+  "topicModel": "@cf/cloudflare/clef",
+  "topics": {
+    "arrays": "Arrays, lists, sequences, or subarrays are central to the task.",
+    "strings": "Processing, transforming, or comparing textual strings is central.",
+    "numbers": "Integer digits, representations, or numeric properties are central; merely using numeric values is insufficient.",
+    "math": "Arithmetic, algebra, number theory, combinatorics, or a mathematical relation is central.",
+    "bit-manipulation": "Binary representations or bit-level operations are central; binary search alone does not qualify.",
+    "recursion": "Recursion is explicitly requested or fundamental to the task; one possible recursive solution alone is insufficient.",
+    "dynamic-programming": "The task centrally involves optimizing over overlapping subproblems; explainable recurrence is a natural defining feature.",
+    "sorting": "Ordering or reordering data is a central requested operation; already sorted input alone is insufficient.",
+    "searching": "Finding a target, match, path, or boundary in a collection or search space is central.",
+    "hash-maps": "Maps, dictionaries, keyed lookup, frequency counting, or implementing a hash map is central.",
+    "linked-lists": "Linked nodes, list pointers, or linked-list operations are central.",
+    "trees": "A tree data structure or hierarchy of nodes is central; printing a pine-tree shape alone is insufficient.",
+    "graphs": "Vertices, edges, connectivity, or cycle structure is central, including implicit graphs when intrinsic to the task.",
+    "stacks-queues": "Stack or queue semantics, LIFO/FIFO behavior, or implementing these structures is central.",
+    "matrices": "A two-dimensional array, board, or grid and its cell relationships are central.",
+    "intervals": "Ranges, time spans, interval merging, or overlap between intervals is central.",
+    "two-pointers": "Coordinated pointer or index movement is a defining technique for the task, rather than an incidental possible implementation.",
+    "sliding-window": "Maintaining a contiguous moving window is a defining feature of the task.",
+    "dates-times": "Calendar dates, clocks, durations, or time calculations are central; identifiers containing a date are insufficient.",
+    "geometry": "Shapes, coordinates, distances, spatial relations, or geometric measurement are central.",
+    "games": "Rules or state of an actual game are central; a seasonal story alone is insufficient.",
+    "parsing": "Interpreting syntax, commands, encoded notation, or a structured textual format is central.",
+    "regex": "Regular expressions or regex matching are explicitly required or offered as a task variant; a prohibition on regex does not qualify.",
+    "probability": "Probability, random sampling, or randomized generation is central; the word random in a pointer or input description alone is insufficient.",
+    "simulation": "Modeling a sequence of state changes under explicit rules is central.",
+    "data-structures": "Designing or implementing a data structure is explicitly requested; merely receiving an array or string is insufficient."
+  },
+  "cases": [
+    {
+      "date": "2017-04-01",
+      "split": "calibration",
+      "expectedTopics": ["numbers", "strings"],
+      "forbiddenTopics": [],
+      "notes": "Oldest question; Roman numeral conversion."
+    },
+    {
+      "date": "2017-09-05",
+      "split": "evaluation",
+      "expectedTopics": ["strings", "parsing"],
+      "forbiddenTopics": ["regex"],
+      "notes": "Explicitly forbids regular expressions and splitting."
+    },
+    {
+      "date": "2017-10-01",
+      "split": "calibration",
+      "expectedTopics": ["geometry", "math"],
+      "forbiddenTopics": [],
+      "notes": "Hand-maintained inverse kinematics question."
+    },
+    {
+      "date": "2017-10-09",
+      "split": "calibration",
+      "expectedTopics": ["stacks-queues", "data-structures"],
+      "forbiddenTopics": [],
+      "notes": "Hand-maintained queue implementation."
+    },
+    {
+      "date": "2017-10-16",
+      "split": "evaluation",
+      "expectedTopics": ["arrays", "searching"],
+      "forbiddenTopics": [],
+      "notes": "Hand-maintained majority in sorted input; sorting is not requested."
+    },
+    {
+      "date": "2017-10-23",
+      "split": "calibration",
+      "expectedTopics": ["arrays", "math"],
+      "forbiddenTopics": [],
+      "notes": "Hand-maintained modular differences; avoid confusing with ordinary two-sum."
+    },
+    {
+      "date": "2017-12-18",
+      "split": "evaluation",
+      "expectedTopics": ["strings"],
+      "forbiddenTopics": ["trees", "stacks-queues", "sorting"],
+      "notes": "Pine-tree printing; previous week's stack solution contaminates the extracted body."
+    },
+    {
+      "date": "2018-01-22",
+      "split": "calibration",
+      "expectedTopics": ["arrays"],
+      "forbiddenTopics": ["dynamic-programming"],
+      "notes": "Hand-maintained rope cutting is minimum/subtraction, not the classic optimization question."
+    },
+    {
+      "date": "2018-02-06",
+      "split": "calibration",
+      "expectedTopics": ["stacks-queues", "recursion"],
+      "forbiddenTopics": [],
+      "notes": "Explicit recursive stack reversal."
+    },
+    {
+      "date": "2018-07-16",
+      "split": "evaluation",
+      "expectedTopics": ["geometry", "math"],
+      "forbiddenTopics": [],
+      "notes": "Hand-maintained rectangle tiling."
+    },
+    {
+      "date": "2019-01-29",
+      "split": "calibration",
+      "expectedTopics": ["matrices", "searching", "games"],
+      "forbiddenTopics": ["dates-times"],
+      "notes": "Boggle; function name validate must not trigger date classification."
+    },
+    {
+      "date": "2019-07-10",
+      "split": "evaluation",
+      "expectedTopics": ["strings", "regex", "parsing"],
+      "forbiddenTopics": [],
+      "notes": "Implementing a restricted regex matcher."
+    },
+    {
+      "date": "2020-06-08",
+      "split": "calibration",
+      "expectedTopics": ["bit-manipulation", "numbers"],
+      "forbiddenTopics": [],
+      "notes": "Count set bits in an integer."
+    },
+    {
+      "date": "2020-08-17",
+      "split": "calibration",
+      "expectedTopics": ["arrays", "two-pointers"],
+      "forbiddenTopics": ["probability"],
+      "notes": "Move zeros; random integers do not make this a probability question."
+    },
+    {
+      "date": "2020-11-23",
+      "split": "evaluation",
+      "expectedTopics": ["numbers", "math", "searching"],
+      "forbiddenTopics": ["bit-manipulation"],
+      "notes": "Perfect square with an explicit binary-search hint."
+    },
+    {
+      "date": "2021-07-12",
+      "split": "calibration",
+      "expectedTopics": ["bit-manipulation", "parsing"],
+      "forbiddenTopics": ["graphs"],
+      "notes": "CIDR containment; GraphQL sponsor text is not part of the question."
+    },
+    {
+      "date": "2021-11-15",
+      "split": "calibration",
+      "expectedTopics": ["regex", "strings"],
+      "forbiddenTopics": [],
+      "notes": "Explicit regex to locate tokens in source files."
+    },
+    {
+      "date": "2022-03-07",
+      "split": "evaluation",
+      "expectedTopics": ["hash-maps", "data-structures"],
+      "forbiddenTopics": [],
+      "notes": "Hashmap implementation with detailed method requirements."
+    },
+    {
+      "date": "2022-03-14",
+      "split": "calibration",
+      "expectedTopics": ["matrices", "games"],
+      "forbiddenTopics": [],
+      "notes": "Rotate a Tetris piece represented as a grid."
+    },
+    {
+      "date": "2022-04-25",
+      "split": "calibration",
+      "expectedTopics": ["arrays", "intervals", "sorting"],
+      "forbiddenTopics": [],
+      "notes": "Merge overlapping intervals."
+    },
+    {
+      "date": "2022-07-11",
+      "split": "evaluation",
+      "expectedTopics": ["linked-lists"],
+      "forbiddenTopics": ["probability"],
+      "notes": "Deep-copy a linked list with arbitrary random pointers."
+    },
+    {
+      "date": "2022-12-05",
+      "split": "calibration",
+      "expectedTopics": ["games", "probability", "simulation"],
+      "forbiddenTopics": [],
+      "notes": "Randomized Catan board with adjacency constraints."
+    },
+    {
+      "date": "2024-01-22",
+      "split": "calibration",
+      "expectedTopics": ["trees", "data-structures"],
+      "forbiddenTopics": [],
+      "notes": "Explicit binary-tree data structure and printing."
+    },
+    {
+      "date": "2024-03-25",
+      "split": "evaluation",
+      "expectedTopics": ["matrices", "graphs", "searching"],
+      "forbiddenTopics": ["hash-maps"],
+      "notes": "Grid connectivity; variable called map is not a hash map."
+    },
+    {
+      "date": "2025-03-03",
+      "split": "calibration",
+      "expectedTopics": ["dates-times", "math"],
+      "forbiddenTopics": [],
+      "notes": "Weekly compounded discount by calendar dates."
+    },
+    {
+      "date": "2025-11-24",
+      "split": "calibration",
+      "expectedTopics": ["intervals", "sorting", "arrays"],
+      "forbiddenTopics": [],
+      "notes": "Non-overlapping task scheduling; greedy is absent from the draft vocabulary."
+    },
+    {
+      "date": "2026-02-16",
+      "split": "calibration",
+      "expectedTopics": ["matrices", "arrays"],
+      "forbiddenTopics": [],
+      "notes": "Longer code examples; expanding cells into blocks."
+    },
+    {
+      "date": "2026-10-12",
+      "split": "calibration",
+      "expectedTopics": ["arrays", "dynamic-programming"],
+      "forbiddenTopics": ["games"],
+      "notes": "Recent non-adjacent reward optimization; Halloween story is incidental."
+    },
+    {
+      "date": "2026-10-19",
+      "split": "evaluation",
+      "expectedTopics": ["strings", "stacks-queues", "simulation"],
+      "forbiddenTopics": [],
+      "notes": "Recent text editing by delete/duplicate commands."
+    },
+    {
+      "date": "2026-10-26",
+      "split": "calibration",
+      "expectedTopics": ["arrays", "graphs", "sorting"],
+      "forbiddenTopics": ["probability", "games"],
+      "notes": "Recent permutation swaps; shuffled input is deterministic, party story incidental."
+    }
+  ]
+}

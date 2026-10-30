@@ -12,27 +12,27 @@ const { title } = Astro.props;
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Cassidoo's Interview Questions">
-    <meta name="viewport" content="width=device-width">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <meta name="generator" content={Astro.generator}>
+    <meta content="Cassidoo's Interview Questions" name="description">
+    <meta content="width=device-width" name="viewport">
+    <link href="/favicon.svg" rel="icon" type="image/svg+xml">
+    <meta content={Astro.generator} name="generator">
     <title>{title}</title>
   </head>
   <body class="min-h-screen font-sans bg-slate-50 text-slate-900">
     <div class="py-8 px-4 mx-auto max-w-3xl">
       <header class="mb-12 text-center">
         <h1 class="mb-2 text-4xl font-bold text-slate-900">
-          <a href="/" class="transition-colors hover:text-indigo-600">
+          <a class="transition-colors hover:text-indigo-600" href="/">
             Cassidoo's Interview Questions
           </a>
         </h1>
         <p class="text-slate-600">
           A collection of weekly interview questions from
           <a
-            href="https://cassidoo.co/newsletter/"
             class="text-indigo-600 hover:underline"
-            target="_blank"
+            href="https://cassidoo.co/newsletter/"
             rel="noopener noreferrer"
+            target="_blank"
             >cassidoo's newsletter</a
           >.
         </p>
@@ -46,18 +46,18 @@ const { title } = Astro.props;
         <p>
           Unofficial archive. All content &copy;
           <a
-            href="https://cassidoo.co/"
             class="hover:text-indigo-600"
-            target="_blank"
+            href="https://cassidoo.co/"
             rel="noopener noreferrer"
+            target="_blank"
             >Cassidy Williams</a
           >
           &mdash;
           <a
-            href="https://buttondown.com/cassidoo"
             class="hover:text-indigo-600"
-            target="_blank"
+            href="https://buttondown.com/cassidoo"
             rel="noopener noreferrer"
+            target="_blank"
             >subscribe to the newsletter</a
           >.
         </p>

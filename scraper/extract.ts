@@ -233,11 +233,11 @@ export async function extractQuestion(
 
   const interviewSection = findInterviewSection(document);
   if (!interviewSection) {
-    return { status: "failed", reason: "no interview section" };
+    return { reason: "no interview section", status: "failed" };
   }
 
   if (isAnswersOnly(interviewSection)) {
-    return { status: "skipped", reason: "answers-only" };
+    return { reason: "answers-only", status: "skipped" };
   }
 
   const questionStrong = findQuestionStrong(interviewSection);
@@ -247,11 +247,11 @@ export async function extractQuestion(
     if (plainText) {
       const innerHtml = `<h2>Interview question of the week</h2><p>${plainText}</p>`;
       return {
-        status: "ok",
         markdown: await renderMarkdown(innerHtml, sourceUrl),
+        status: "ok",
       };
     }
-    return { status: "failed", reason: "no question found" };
+    return { reason: "no question found", status: "failed" };
   }
 
   const questionDiv = buildQuestionDiv(
@@ -260,7 +260,7 @@ export async function extractQuestion(
     questionStrong
   );
   return {
-    status: "ok",
     markdown: await renderMarkdown(questionDiv.innerHTML, sourceUrl),
+    status: "ok",
   };
 }
