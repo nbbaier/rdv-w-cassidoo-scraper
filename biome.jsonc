@@ -6,12 +6,8 @@
       "plugins": ["./biome-plugins/no-nested-multiline-template.grit"],
       "linter": {
         "rules": {
-          "nursery": {
-            "useTailwindSortedClasses": "off"
-          },
-          "style": {
-            "useFilenamingConvention": "off"
-          }
+          "nursery": { "useTailwindSortedClasses": "off" },
+          "style": { "useFilenamingConvention": "off" }
         }
       }
     },
