@@ -1,4 +1,4 @@
-export interface SampleCase {
+interface SampleCase {
   date: string;
   expectedTopics: string[];
   forbiddenTopics: string[];

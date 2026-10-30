@@ -2,7 +2,6 @@
   "name": "rdv-w-cassidoo-scraper",
   "private": true,
   "type": "module",
-  "module": "src/index.ts",
   "scripts": {
     "build": "astro build",
     "check": "ultracite check",
@@ -20,17 +19,10 @@
     "astro-icon": "^1.2.0",
     "defuddle": "^0.19.6",
     "feedsmith": "^3.0.1",
-    "htmlparser2": "^12.0.0",
     "jsdom": "^30.1.3",
-    "rehype-parse": "^9.0.1",
-    "rehype-remark": "^10.0.1",
     "remark": "^15.0.1",
-    "remark-frontmatter": "^5.0.0",
-    "remark-stringify": "^11.0.0",
     "remark-unlink": "^5.0.0",
-    "tailwindcss": "^4.3.3",
-    "to-vfile": "^8.0.0",
-    "unified": "^11.0.5"
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
