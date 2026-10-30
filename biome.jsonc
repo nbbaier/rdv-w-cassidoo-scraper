@@ -7,7 +7,7 @@
       "linter": {
         "rules": {
           "nursery": {
-            "useSortedClasses": "off"
+            "useTailwindSortedClasses": "off"
           },
           "style": {
             "useFilenamingConvention": "off"

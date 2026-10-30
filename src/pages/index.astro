@@ -9,8 +9,8 @@ questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const questionsData = questions.map((q) => ({
   date: q.data.date.toISOString().split("T")[0],
   excerpt: (q.body ?? "")
-    .replace(/[#*[\]()]/g, "")
-    .replace(/`/g, "")
+    .replace(/[#*[\]()]/gu, "")
+    .replace(/`/gu, "")
     .slice(0, 150),
   slug: q.id,
   year: q.data.date.getFullYear(),

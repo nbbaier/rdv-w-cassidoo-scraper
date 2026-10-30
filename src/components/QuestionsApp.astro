@@ -274,24 +274,24 @@ const showingRange = `0-${Math.min(initialPageSize, totalItems)}`;
     /** @type {{ slug: string; date: string; excerpt: string; text: string }[]} */ ([]);
 
   // DOM Elements
-  const searchInput = document.getElementById("search-input");
-  const prevPageBtn = document.getElementById("prev-page-btn");
-  const nextPageBtn = document.getElementById("next-page-btn");
-  const pageInput = document.getElementById("page-input");
-  const totalPagesDisplay = document.getElementById("total-pages-display");
-  const showingRangeEl = document.getElementById("showing-range");
-  const showingRangeMobileEl = document.getElementById("showing-range-mobile");
-  const questionsListEl = document.getElementById("questions-list");
-  const noResultsEl = document.getElementById("no-results");
-  const questionCardTemplate = document.getElementById(
-    "question-card-template"
+  const searchInput = document.querySelector("#search-input");
+  const prevPageBtn = document.querySelector("#prev-page-btn");
+  const nextPageBtn = document.querySelector("#next-page-btn");
+  const pageInput = document.querySelector("#page-input");
+  const totalPagesDisplay = document.querySelector("#total-pages-display");
+  const showingRangeEl = document.querySelector("#showing-range");
+  const showingRangeMobileEl = document.querySelector("#showing-range-mobile");
+  const questionsListEl = document.querySelector("#questions-list");
+  const noResultsEl = document.querySelector("#no-results");
+  const questionCardTemplate = document.querySelector(
+    "#question-card-template"
   );
 
   // Custom Select Logic
   function setupCustomSelect(triggerId, dropdownId, inputId, onSelect) {
-    const trigger = document.getElementById(triggerId);
-    const dropdown = document.getElementById(dropdownId);
-    const input = document.getElementById(inputId);
+    const trigger = document.querySelector(`#${triggerId}`);
+    const dropdown = document.querySelector(`#${dropdownId}`);
+    const input = document.querySelector(`#${inputId}`);
     const options = dropdown.querySelectorAll(".option-item");
 
     if (!(trigger && dropdown && input)) {

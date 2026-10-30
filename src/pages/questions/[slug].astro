@@ -112,6 +112,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
   </div>
 </Layout>
 
+<!-- biome-ignore lint/suspicious/useScopedStyles: Markdown rendered by Content needs descendant styles without Astro scope attributes. -->
 <style is:global>
   /* Custom styling for the markdown content to look nice */
   .markdown-content h2 {
@@ -137,6 +138,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
   .markdown-content code {
     padding: 0.125rem 0.375rem;
     font-family:
+            /* biome-ignore lint/suspicious/useBaseline: Unsupported generic fonts fall back to the remaining monospace stack. */
       ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.875rem;
     color: #db2777;

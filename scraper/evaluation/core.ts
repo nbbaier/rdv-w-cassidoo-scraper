@@ -36,7 +36,7 @@ export interface Metrics {
   truePositives: number;
 }
 
-const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/;
+const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/u;
 
 export function questionBody(raw: string): string {
   const match = FRONTMATTER.exec(raw);

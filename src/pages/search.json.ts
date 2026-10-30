@@ -5,8 +5,8 @@ export async function GET() {
 
   const searchIndex = questions.map((question) => {
     const stripped = (question.body ?? "")
-      .replace(/[#*`[\]()]/g, "") // Remove basic markdown chars
-      .replace(/\n+/g, " ") // Replace newlines with spaces
+      .replace(/[#*`[\]()]/gu, "") // Remove basic markdown chars
+      .replace(/\n+/gu, " ") // Replace newlines with spaces
       .trim();
 
     return {
