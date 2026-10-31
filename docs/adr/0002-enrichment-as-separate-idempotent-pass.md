@@ -8,3 +8,5 @@ Rationale: an LLM call on the scrape's critical path means an API hiccup blocks 
 
 - `title` and `topics` are permanently optional in the content schema; the UI must degrade gracefully (excerpt fallback, no topic chip) when they're absent.
 - Topic assignment uses a cheap model constrained to the predetermined vocabulary; adding a topic is a deliberate schema change.
+
+The provider split is recorded in [ADR 0003](0003-clef-topics-and-haiku-titles.md): Clef assigns Topics and Haiku generates Titles. Its low-confidence review behavior preserves this ADR's optional-metadata contract.

@@ -329,12 +329,19 @@ async function report(
   trials: Trial[]
 ): Promise<void> {
   const complete = trials.length === questions.length * 3;
+  const reviewAvailable = await Bun.file(new URL("review.md", OUTPUT)).exists();
+  let status = `pending (${trials.length}/90 recorded calls)`;
+  if (complete) {
+    status = reviewAvailable
+      ? "API calls complete; agent review available; maintainer approval pending"
+      : "API calls complete; manual Title/Topic review pending";
+  }
   const lines = [
     "# Thirty-Question enrichment comparison",
     "",
     `Study: ${study.revision}. ${study.referenceStatus}`,
     "",
-    `Status: **${complete ? "API calls complete; manual Title/Topic review pending" : `pending (${trials.length}/90 successful calls)`}**.`,
+    `Status: **${status}**.`,
     "",
     "Both paths use the same original Question bodies. Haiku generates Title + Topics in one path; the other uses full Clef for Topics and Haiku separately for Title. No production metadata is written.",
     "",
@@ -425,7 +432,9 @@ async function report(
     "",
     "## Decision",
     "",
-    "Pending API results and manual review. A provider winner and vocabulary approval must not be inferred from an incomplete comparison.",
+    complete && reviewAvailable
+      ? "Read [the review](review.md) for the provisional recommendation, concrete disagreements, Title assessment, and limitations. The vocabulary and production integration still need a maintainer decision."
+      : "Pending API results and manual review. A provider winner and vocabulary approval must not be inferred from an incomplete comparison.",
     ""
   );
   await Bun.write(
@@ -454,8 +463,23 @@ async function run(
   trials: Trial[]
 ): Promise<void> {
   const auth = credentials();
+  const stages = process.env.EVAL_STAGES?.split(",") ?? [
+    "haiku-combined",
+    "clef-topics",
+    "haiku-title",
+  ];
+  if (
+    stages.some(
+      (stage) =>
+        !["haiku-combined", "clef-topics", "haiku-title"].includes(stage)
+    )
+  ) {
+    throw new Error("EVAL_STAGES contains an unknown comparison stage");
+  }
   const tasks = questions.flatMap((question) =>
-    specs(study, question).map((spec) => ({ question, spec }))
+    specs(study, question)
+      .filter((spec) => stages.includes(spec.stage))
+      .map((spec) => ({ question, spec }))
   );
   for (const { question, spec } of tasks) {
     const key = requestKey(study, spec);

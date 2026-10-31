@@ -9,6 +9,8 @@ bun scraper/evaluation/compare.ts --prepare
 bun test scraper/evaluation/core.test.ts
 # After configuring the credentials below:
 bun scraper/evaluation/compare.ts --run
+# Resume only selected stages when a provider is temporarily unavailable:
+EVAL_STAGES=haiku-combined,haiku-title bun scraper/evaluation/compare.ts --run
 # Rebuild the report from cached results without API calls:
 bun scraper/evaluation/compare.ts --report
 ```

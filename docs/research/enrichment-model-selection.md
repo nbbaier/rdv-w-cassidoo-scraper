@@ -2,6 +2,10 @@
 
 Researched 2026-10-30 against current provider documentation. No model calls or paid evaluations were run, so the fit assessments below are recommendations to test, not measured quality results. This revisits issue #14's July choice of `claude-haiku-4-5`; it does not implement a provider change.
 
+Follow-up: the authorized 30-Question comparison has now completed. See [the measured results and review](enrichment-comparison/review.md); the sections below preserve the initial documentation research and its pre-evaluation recommendations.
+
+**Maintainer decision, 2026-10-30:** use full Clef (`@cf/cloudflare/clef`) for Topics and Haiku 5.5 (`claude-haiku-5-5`) for Titles. The provider choice is settled. Topic definitions, the production threshold, and the corpus backfill remain separate checkpoints in [the launch plan](../launch.md).
+
 ## Workload and decision
 
 Each Question needs a short specific Title and 1–3 Topics from a fixed vocabulary, returned as validated JSON. The script must preserve the question body, retry incomplete metadata in later runs, and keep weekly scraping independent of model failures, per ADR 0002.

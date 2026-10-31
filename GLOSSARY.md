@@ -5,7 +5,7 @@ A public, read-only web archive of the weekly interview questions from Cassidy W
 ## Language
 
 **Issue**:
-One edition of the Cassidoo newsletter, identified by its publication date and Buttondown URL.
+One edition of the Cassidoo newsletter, identified by its publication date and canonical newsletter URL. The URL's date can differ from the publication date.
 _Avoid_: post, article, email
 
 **Question**:
