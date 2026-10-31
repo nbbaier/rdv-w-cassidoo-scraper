@@ -197,13 +197,10 @@ function requestDetails(
   return { endpoint, headers };
 }
 
-async function responseBody(
-  response: Response,
-  clef: boolean
-): Promise<Record<string, unknown>> {
+function responseBody(body: string, clef: boolean): Record<string, unknown> {
   let envelope: Record<string, unknown>;
   try {
-    envelope = object(await response.json());
+    envelope = object(JSON.parse(body));
   } catch (cause) {
     throw new ProviderError("Provider returned invalid JSON", { cause });
   }
@@ -231,9 +228,13 @@ async function fetchAttempt(
   endpoint: string,
   init: RequestInit,
   last: boolean
-): Promise<Response | undefined> {
+): Promise<{ response: Response; body: string } | undefined> {
   try {
-    return await fetcher(endpoint, init);
+    const response = await fetcher(endpoint, init);
+    // The timeout covers headers AND body. Stream failures are transport errors;
+    // parse a successfully read body outside this retry path to reject bad JSON.
+    const body = response.ok ? await response.text() : "";
+    return { body, response };
   } catch (cause) {
     if (last) {
       throw new ProviderError(
@@ -255,7 +256,7 @@ export function createTransport(
     const { endpoint, headers } = requestDetails(spec, env);
     for (let attempt = 0; attempt < 3; attempt += 1) {
       // biome-ignore lint/performance/noAwaitInLoops: Bounded retries depend on the preceding attempt.
-      const response = await fetchAttempt(
+      const received = await fetchAttempt(
         fetcher,
         endpoint,
         {
@@ -266,6 +267,7 @@ export function createTransport(
         },
         attempt === 2
       );
+      const response = received?.response;
       if (
         !response ||
         ((response.status === 429 || response.status >= 500) && attempt < 2)
@@ -281,7 +283,7 @@ export function createTransport(
         });
       }
       return {
-        response: await responseBody(response, spec.field === "topics"),
+        response: responseBody(received?.body ?? "", spec.field === "topics"),
         retries: attempt,
       };
     }

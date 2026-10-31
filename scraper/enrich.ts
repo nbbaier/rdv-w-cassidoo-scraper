@@ -1,3 +1,11 @@
+import {
+  closeSync,
+  openSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  unlinkSync,
+} from "node:fs";
 import { rename } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import {
@@ -77,10 +85,40 @@ export function digest(value: string): string {
   return new Bun.CryptoHasher("sha256").update(value).digest("hex");
 }
 
-async function atomicWrite(path: string, content: string): Promise<void> {
+async function atomicWrite(
+  path: string,
+  content: string,
+  expectedSource?: string
+): Promise<void> {
   const temporary = `${path}.${crypto.randomUUID()}.tmp`;
-  await Bun.write(temporary, content);
-  await rename(temporary, path);
+  const lockPath = `${path}.enrichment.lock`;
+  // Exclusive creation coordinates separate enrichment processes as well as
+  // workers. An abandoned lock fails closed until an operator removes it.
+  const lock =
+    expectedSource === undefined ? undefined : openSync(lockPath, "wx", 0o600);
+  try {
+    await Bun.write(temporary, content);
+    if (expectedSource === undefined) {
+      await rename(temporary, path);
+    } else {
+      // Read AFTER preparing the replacement. Keep comparison and rename in one
+      // synchronous section so an in-process editor cannot save between awaits.
+      // Other enrichment processes honor the lock; arbitrary editors do not.
+      if (readFileSync(path, "utf8") !== expectedSource) {
+        throw new Error("Source changed during enrichment");
+      }
+      renameSync(temporary, path);
+    }
+  } finally {
+    try {
+      rmSync(temporary, { force: true });
+    } finally {
+      if (lock !== undefined) {
+        closeSync(lock);
+        unlinkSync(lockPath);
+      }
+    }
+  }
 }
 
 function parsedResponse(
@@ -258,12 +296,13 @@ export async function enrich(options: Options): Promise<Report> {
       );
       const output = addMetadata(document, additions);
       row.changed = output !== raw;
-      // A concurrent scraper/editor must never be overwritten, even in dry runs.
+      // Detect changes during inference even in dry runs. Write mode also checks
+      // the source under its lock after the temporary file is complete.
       if (digest(await Bun.file(path).text()) !== row.sourceHash) {
         throw new Error("Source changed during enrichment");
       }
       if (row.changed && !options.dryRun) {
-        await atomicWrite(path, output);
+        await atomicWrite(path, output, raw);
         row.written = true;
       }
     } catch {

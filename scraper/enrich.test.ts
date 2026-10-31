@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test as it } from "bun:test";
+import { afterEach, describe, expect, test as it, mock, spyOn } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -85,6 +85,7 @@ async function fixture(
 }
 
 afterEach(async () => {
+  mock.restore();
   await Promise.all(
     roots.splice(0).map((root) => rm(root, { force: true, recursive: true }))
   );
@@ -344,6 +345,84 @@ describe("independent enrichment and checkpoints", () => {
     expect(await Bun.file(path).text()).toContain("User edit");
   });
 
+  it("preserves an editor save during the temporary Question write", async () => {
+    const { options, path } = await fixture();
+    const { write } = Bun;
+    const edited = `${SOURCE}Saved while the replacement was being written\n`;
+    let intercepted = false;
+    spyOn(Bun, "write").mockImplementation(async (destination, data) => {
+      if (typeof destination !== "string" || typeof data !== "string") {
+        throw new Error("The fixture only writes strings to string paths");
+      }
+      const result = await write(destination, data);
+      if (destination.startsWith(`${path}.`) && destination.endsWith(".tmp")) {
+        intercepted = true;
+        await write(path, edited);
+      }
+      return result;
+    });
+    const report = await enrich({ ...options, dryRun: false });
+    expect(intercepted).toBe(true);
+    expect(await Bun.file(path).text()).toBe(edited);
+    expect(report.summary.failed).toBe(1);
+    expect(report.summary.written).toBe(0);
+    expect(
+      await Array.fromAsync(new Bun.Glob("*.tmp").scan(options.directory))
+    ).toEqual([]);
+    expect(await Bun.file(`${path}.enrichment.lock`).exists()).toBe(false);
+  });
+
+  it("rejects a competing enrichment writer while a Question replacement is pending", async () => {
+    const { options, path } = await fixture();
+    const { write } = Bun;
+    const ready = Promise.withResolvers<void>();
+    const release = Promise.withResolvers<void>();
+    let held = false;
+    spyOn(Bun, "write").mockImplementation(async (destination, data) => {
+      if (typeof destination !== "string" || typeof data !== "string") {
+        throw new Error("The fixture only writes strings to string paths");
+      }
+      const result = await write(destination, data);
+      if (
+        !held &&
+        destination.startsWith(`${path}.`) &&
+        destination.endsWith(".tmp")
+      ) {
+        held = true;
+        ready.resolve();
+        await release.promise;
+      }
+      return result;
+    });
+    const first = enrich({ ...options, dryRun: false });
+    await ready.promise;
+    let second: Awaited<ReturnType<typeof enrich>>;
+    try {
+      second = await enrich({ ...options, dryRun: false });
+    } finally {
+      release.resolve();
+    }
+    const completed = await first;
+    expect(second.summary.failed).toBe(1);
+    expect(second.summary.written).toBe(0);
+    expect(completed.summary.written).toBe(1);
+    expect(await Bun.file(`${path}.enrichment.lock`).exists()).toBe(false);
+  });
+
+  it("fails closed on an existing write lock without removing another writer's lock", async () => {
+    const { options, path } = await fixture();
+    const lockPath = `${path}.enrichment.lock`;
+    await Bun.write(lockPath, "owned by another writer");
+    const report = await enrich({ ...options, dryRun: false });
+    expect(report.summary.failed).toBe(1);
+    expect(report.summary.written).toBe(0);
+    expect(await Bun.file(path).text()).toBe(SOURCE);
+    expect(await Bun.file(lockPath).text()).toBe("owned by another writer");
+    expect(
+      await Array.fromAsync(new Bun.Glob("*.tmp").scan(options.directory))
+    ).toEqual([]);
+  });
+
   it("permanent auth failures stop repeated calls for that field", async () => {
     const { options } = await fixture();
     await Bun.write(
@@ -515,6 +594,65 @@ describe("direct provider contracts", () => {
     expect(
       await failureMessage(transport(requestSpec("topics", "body")))
     ).toContain("codes: 10000");
+  });
+
+  it.each(["disconnect", "timeout"])(
+    "retries an interrupted response body: %s",
+    async (failure) => {
+      let calls = 0;
+      const transport = createTransport({
+        env: { ANTHROPIC_API_KEY: "fixture-token" },
+        fetcher: (() => {
+          calls += 1;
+          if (calls === 1) {
+            return Promise.resolve(
+              new Response(
+                new ReadableStream({
+                  start(controller) {
+                    controller.enqueue(new TextEncoder().encode('{"content":'));
+                    controller.error(
+                      failure === "timeout"
+                        ? new DOMException("fixture timeout", "TimeoutError")
+                        : new TypeError("fixture disconnect")
+                    );
+                  },
+                })
+              )
+            );
+          }
+          return Promise.resolve(Response.json(TITLE));
+        }) as unknown as typeof fetch,
+        sleep: () => Promise.resolve(),
+      });
+      const result = await transport(requestSpec("title", "body"));
+      expect(calls).toBe(2);
+      expect(result.retries).toBe(1);
+      expect(parseTitle(result.response)).toBe("Count the bees");
+    }
+  );
+
+  it("exhausts the retry budget for repeated response stream failures", async () => {
+    let calls = 0;
+    const transport = createTransport({
+      env: { ANTHROPIC_API_KEY: "fixture-token" },
+      fetcher: (() => {
+        calls += 1;
+        return Promise.resolve(
+          new Response(
+            new ReadableStream({
+              start(controller) {
+                controller.error(new TypeError("fixture stream failure"));
+              },
+            })
+          )
+        );
+      }) as unknown as typeof fetch,
+      sleep: () => Promise.resolve(),
+    });
+    expect(
+      await failureMessage(transport(requestSpec("title", "body")))
+    ).toContain("network/timeout failure after 3 attempts");
+    expect(calls).toBe(3);
   });
 
   it("network failures are bounded and do not expose thrown request details", async () => {
