@@ -1,13 +1,11 @@
 import { getCollection } from "astro:content";
+import { plainText } from "../lib/excerpt";
 
 export async function GET() {
   const questions = await getCollection("questions");
 
   const searchIndex = questions.map((question) => {
-    const stripped = (question.body ?? "")
-      .replace(/[#*`[\]()]/gu, "") // Remove basic markdown chars
-      .replace(/\n+/gu, " ") // Replace newlines with spaces
-      .trim();
+    const stripped = plainText(question.body ?? "");
 
     return {
       date: question.data.date.toISOString().split("T")[0],
