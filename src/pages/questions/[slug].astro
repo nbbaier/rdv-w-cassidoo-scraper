@@ -7,12 +7,13 @@ export async function getStaticPaths() {
   const questions = await getCollection("questions");
   questions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
+  // biome-ignore lint/suspicious/noShadow: index is used to get the next and previous question
   return questions.map((question, index) => ({
     params: { slug: question.id },
     props: {
-      question,
-      prevQuestion: index > 0 ? questions[index - 1] : null,
       nextQuestion: index < questions.length - 1 ? questions[index + 1] : null,
+      prevQuestion: index > 0 ? questions[index - 1] : null,
+      question,
     },
   }));
 }
@@ -21,10 +22,10 @@ const { question, prevQuestion, nextQuestion } = Astro.props;
 const { Content } = await render(question);
 
 const date = new Date(question.data.date).toLocaleDateString("en-US", {
+  day: "numeric",
+  month: "long",
   weekday: "long",
   year: "numeric",
-  month: "long",
-  day: "numeric",
 });
 ---
 
@@ -38,36 +39,36 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
       >
         <div class="justify-self-start">
           {prevQuestion && (
-   <a
-      class="flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-      href={`/questions/${prevQuestion.id}`}
-   >
-      <Icon class="size-4" name="lucide:chevron-left" />
-      <span class="text-sm text-muted-foreground">
-         {prevQuestion.id}
-      </span>
-   </a>
-)}
+            <a
+              class="flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              href={`/questions/${prevQuestion.id}`}
+            >
+              <Icon class="size-4" name="lucide:chevron-left" />
+              <span class="text-sm text-muted-foreground">
+                {prevQuestion.id}
+              </span>
+            </a>
+          )}
         </div>
         <div class="justify-self-center">
           <a
-            href="/"
             class="inline-flex justify-center items-center px-3 h-9 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+            href="/"
             >All questions</a
           >
         </div>
         <div class="justify-self-end">
           {nextQuestion && (
-   <a
-      class="flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-      href={`/questions/${nextQuestion.id}`}
-   >
-      <span class="text-sm text-muted-foreground">
-         {nextQuestion.id}
-      </span>
-      <Icon class="size-4" name="lucide:chevron-right" />
-   </a>
-)}
+            <a
+              class="flex gap-2 justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              href={`/questions/${nextQuestion.id}`}
+            >
+              <span class="text-sm text-muted-foreground">
+                {nextQuestion.id}
+              </span>
+              <Icon class="size-4" name="lucide:chevron-right" />
+            </a>
+          )}
         </div>
       </div>
 
@@ -83,24 +84,24 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
         <!-- Bottom links -->
         <div class="flex justify-between items-center">
           <a
-            href="/"
             class="inline-flex justify-center items-center px-4 py-2 h-10 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline"
+            href="/"
             >← Back to all questions</a
           >
           <div class="flex gap-2 items-center">
             <a
-              href="https://buttondown.com/cassidoo"
-              target="_blank"
-              rel="noopener noreferrer"
               class="inline-flex justify-center items-center px-3 h-9 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+              href="https://buttondown.com/cassidoo"
+              rel="noopener noreferrer"
+              target="_blank"
             >
               Subscribe to the newsletter ↗
             </a>
             <a
-              href={question.data.url}
-              target="_blank"
-              rel="noopener noreferrer"
               class="inline-flex justify-center items-center px-3 h-9 text-sm font-medium whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+              href={question.data.url}
+              rel="noopener noreferrer"
+              target="_blank"
             >
               View original newsletter ↗
             </a>
@@ -111,6 +112,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
   </div>
 </Layout>
 
+<!-- biome-ignore lint/suspicious/useScopedStyles: Markdown rendered by Content needs descendant styles without Astro scope attributes. -->
 <style is:global>
   /* Custom styling for the markdown content to look nice */
   .markdown-content h2 {
@@ -135,8 +137,7 @@ const date = new Date(question.data.date).toLocaleDateString("en-US", {
   }
   .markdown-content code {
     padding: 0.125rem 0.375rem;
-    font-family:
-      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.875rem;
     color: #db2777;
     background-color: #f1f5f9;

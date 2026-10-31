@@ -3,8 +3,8 @@ import { JSDOM } from "jsdom";
 import { remark } from "remark";
 import remarkUnlink from "remark-unlink";
 
-const H2_CLOSE_TAG = /<\/h2>/i;
-const QUESTION_AFTER_H2 = /^([\s\S]*?)(?:Example|<hr|$)/i;
+const H2_CLOSE_TAG = /<\/h2>/iu;
+const QUESTION_AFTER_H2 = /^(?<question>[\s\S]*?)(?:Example|<hr|$)/iu;
 
 const blockTags = new Set([
   "H1",
@@ -69,13 +69,13 @@ function normalizeBrsToParagraphs(element: Element): void {
 }
 
 function wrapContentBetweenHRs(dom: JSDOM): void {
-  const document = dom.window.document;
+  const { document } = dom.window;
   const hrs = document.querySelectorAll("hr");
   if (hrs.length < 2) {
     return;
   }
 
-  for (let i = hrs.length - 2; i >= 0; i--) {
+  for (let i = hrs.length - 2; i >= 0; i -= 1) {
     const startHR = hrs[i] as Node;
     const endHR = hrs[i + 1] as Node;
     if (!(startHR?.parentNode && endHR?.parentNode)) {
@@ -149,15 +149,15 @@ function extractPlainTextQuestion(interviewSection: Element): string | null {
   if (!h2) {
     return null;
   }
-  const afterH2 = interviewSection.innerHTML.split(H2_CLOSE_TAG)[1];
+  const [, afterH2] = interviewSection.innerHTML.split(H2_CLOSE_TAG);
   if (!afterH2) {
     return null;
   }
-  const questionMatch = afterH2.match(QUESTION_AFTER_H2);
-  if (!questionMatch || questionMatch[1].trim().length <= 30) {
+  const question = afterH2.match(QUESTION_AFTER_H2)?.groups?.question;
+  if (!question || question.trim().length <= 30) {
     return null;
   }
-  return questionMatch[1].trim();
+  return question.trim();
 }
 
 async function renderMarkdown(
@@ -233,11 +233,11 @@ export async function extractQuestion(
 
   const interviewSection = findInterviewSection(document);
   if (!interviewSection) {
-    return { status: "failed", reason: "no interview section" };
+    return { reason: "no interview section", status: "failed" };
   }
 
   if (isAnswersOnly(interviewSection)) {
-    return { status: "skipped", reason: "answers-only" };
+    return { reason: "answers-only", status: "skipped" };
   }
 
   const questionStrong = findQuestionStrong(interviewSection);
@@ -247,11 +247,11 @@ export async function extractQuestion(
     if (plainText) {
       const innerHtml = `<h2>Interview question of the week</h2><p>${plainText}</p>`;
       return {
-        status: "ok",
         markdown: await renderMarkdown(innerHtml, sourceUrl),
+        status: "ok",
       };
     }
-    return { status: "failed", reason: "no question found" };
+    return { reason: "no question found", status: "failed" };
   }
 
   const questionDiv = buildQuestionDiv(
@@ -260,7 +260,7 @@ export async function extractQuestion(
     questionStrong
   );
   return {
-    status: "ok",
     markdown: await renderMarkdown(questionDiv.innerHTML, sourceUrl),
+    status: "ok",
   };
 }

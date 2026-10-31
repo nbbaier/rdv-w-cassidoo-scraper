@@ -4,7 +4,7 @@ Source of truth for any agent working in this repo.
 
 ## Project Overview
 
-A static web archive of interview questions from Cassidy Williams' (Cassidoo) weekly newsletter — a public, read-only archive, not a practice platform or product (see [CONTEXT.md](./CONTEXT.md) for identity and terms, [docs/launch.md](docs/launch.md) for the launch plan). Two parts:
+A static web archive of interview questions from Cassidy Williams' (Cassidoo) weekly newsletter — a public, read-only archive, not a practice platform or product (see [GLOSSARY.md](./GLOSSARY.md) for identity and terms, [docs/launch.md](docs/launch.md) for the launch plan). Two parts:
 
 1. **Scraper** (`scraper/`): pulls newsletter content from Buttondown's RSS feed and writes one markdown file per issue.
 2. **Frontend** (`src/`): Astro static site that lists and renders the questions.
@@ -18,19 +18,12 @@ This project exclusively uses **Bun** (not Node.js, npm, or pnpm):
 - Execute files: `bun <file.ts>`
 - Bun loads `.env` automatically — do not import `dotenv`.
 
-## Common Commands
+## Commands
 
-```bash
-bun run dev                  # Start Astro dev server
-bun run build                # Build static site
-bun run preview              # Preview production build
-bun run check                # Ultracite (Biome) lint check
-bun run fix                  # Ultracite (Biome) auto-fix
-bun run check:astro          # Astro type / content-schema check
+Scripts are in `package.json`. Two notes on `bun run scrape`:
 
-bun run scrape               # Fetch RSS (COUNT=1000 default), write any missing question files
-COUNT=20 bun run scrape      # Smaller window — only safe if every item already exists on disk
-```
+- It fetches `COUNT=1000` RSS items by default; keep that default (see **Numbering** below).
+- `COUNT=20 bun run scrape` is only safe when every item in that window already exists on disk.
 
 ## Code Style
 
@@ -94,7 +87,7 @@ docs/
   ├── adr/               # Architectural decisions (start at 0001)
   ├── agents/            # Agent skill configuration (issue tracker, triage labels, domain docs)
   └── launch.md          # Launch plan and post-launch queue
-CONTEXT.md               # Domain glossary — project identity and canonical terms
+GLOSSARY.md              # Domain glossary — project identity and canonical terms
 ```
 
 ## Automation
@@ -118,7 +111,7 @@ CONTEXT.md               # Domain glossary — project identity and canonical te
 
 ## Testing & Validation
 
-There is no test suite. Validation = running `bun run check` (Ultracite/Biome) and `bunx astro check` (content schema + TypeScript), plus eyeballing the summary line printed at the end of `bun run scrape` (a non-zero "failed" count generally means an issue without an interview segment, not a parser regression — but worth verifying).
+There is no test suite. Validation = running `bun run check` (Ultracite/Biome) and `bun run check:astro` (content schema + TypeScript), plus eyeballing the summary line printed at the end of `bun run scrape` (a non-zero "failed" count generally means an issue without an interview segment, not a parser regression — but worth verifying).
 
 ## Agent skills
 
@@ -132,15 +125,8 @@ Uses the default triage label vocabulary (needs-triage, needs-info, ready-for-ag
 
 ### Domain docs
 
-Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: one `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
 ## Learned User Preferences
 
 - Do not use TypeScript type syntax in Astro `is:inline` scripts; use JSDoc casts instead.
-- Prefer `for...of` over `forEach` in inline scripts (Biome `noForEach`).
-
-## Learned Workspace Facts
-
-- Biome reformats nested multiline template literals inside `.astro` `<script>` blocks on every `bun run fix`, adding indentation each pass; build client HTML with single-line string arrays joined by `.join("")` or `<template>` cloning instead.
-- Biome `useSortedClasses` often does not auto-fix Tailwind class order in `.astro` files; apply Biome's suggested order manually.
-- `src/components/QuestionsApp.astro` has a Biome override disabling `useFilenamingConvention` (PascalCase is standard for Astro components).

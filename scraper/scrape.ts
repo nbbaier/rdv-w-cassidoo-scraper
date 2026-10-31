@@ -19,30 +19,31 @@ if (format !== "rss") {
 const items = (feed.items ?? [])
   .filter((i) => i.link && i.pubDate && i.description)
   .map((i) => ({
+    date: new Date(i.pubDate as string).toISOString().slice(0, 10),
+    description: i.description as string,
     link: i.link as string,
     pubDate: i.pubDate as string,
-    description: i.description as string,
-    date: new Date(i.pubDate as string).toISOString().slice(0, 10),
   }))
   .sort((a, b) => a.date.localeCompare(b.date));
 
 console.log(`Feed returned ${items.length} items`);
 
 const totals = {
+  failed: 0,
   processed: 0,
-  written: 0,
   skipped_exists: 0,
   skipped_no_question: 0,
-  failed: 0,
+  written: 0,
 };
 
 for (const [i, item] of items.entries()) {
-  totals.processed++;
+  totals.processed += 1;
   const number = i + 1;
   const path = `${OUT_DIR}/${item.date}.md`;
 
+  // biome-ignore lint/performance/noAwaitInLoops: Process issues sequentially to bound DOM memory and keep output ordered.
   if (await Bun.file(path).exists()) {
-    totals.skipped_exists++;
+    totals.skipped_exists += 1;
     continue;
   }
 
@@ -58,13 +59,13 @@ number: ${number}
 ${result.markdown}
 `;
     await Bun.write(path, output);
-    totals.written++;
+    totals.written += 1;
     console.log(`wrote ${item.date} (#${number})`);
   } else if (result.status === "skipped") {
-    totals.skipped_no_question++;
+    totals.skipped_no_question += 1;
     console.log(`skipped ${item.date} (#${number}): ${result.reason}`);
   } else {
-    totals.failed++;
+    totals.failed += 1;
     console.log(`failed ${item.date} (#${number}): ${result.reason}`);
   }
 }
