@@ -5,6 +5,10 @@ on:
     - cron: "0 12 * * 1"
   workflow_dispatch: # Allow manual triggering
 
+concurrency:
+  group: weekly-scrape
+  cancel-in-progress: false
+
 jobs:
   scrape-and-update:
     runs-on: ubuntu-latest
@@ -31,6 +35,36 @@ jobs:
         # the sequence (e.g. 458).
         run: bun run scrape
 
+      # Enable only after the vocabulary/threshold/dry-run/backfill review in #14
+      # and CI credential setup. The default (unset variable) keeps this dormant.
+      - name: Restore enrichment responses
+        if: vars.ENRICHMENT_ENABLED == 'true'
+        uses: actions/cache@v4
+        with:
+          path: .cache/enrichment/responses
+          key: enrichment-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: enrichment-v1-${{ runner.os }}-
+
+      - name: Enrich missing metadata
+        if: vars.ENRICHMENT_ENABLED == 'true'
+        continue-on-error: true
+        env:
+          DRY_RUN: "0"
+          # No write-mode default: an unset threshold fails safely.
+          TOPIC_THRESHOLD: ${{ vars.ENRICHMENT_TOPIC_THRESHOLD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: bun run enrich
+
+      - name: Retain enrichment review and failure report
+        if: always() && vars.ENRICHMENT_ENABLED == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: enrichment-report
+          path: .cache/enrichment/report.json
+          if-no-files-found: warn
+
       - name: Check for changes
         id: git-check
         run: |
@@ -45,5 +79,9 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add src/content/questions/*.md
           DATES=$(git diff --cached --name-only --diff-filter=A src/content/questions/ | sed 's|src/content/questions/||;s|\.md||' | sort | tr '\n' ',' | sed 's/,$//')
-          git commit -m "Add new interview questions: ${DATES}"
+          if [ -n "$DATES" ]; then
+            git commit -m "Add new interview questions: ${DATES}"
+          else
+            git commit -m "Enrich interview question metadata"
+          fi
           git push

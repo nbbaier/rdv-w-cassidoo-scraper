@@ -7,10 +7,12 @@
     "check": "ultracite check",
     "check:astro": "astro check",
     "dev": "astro dev",
+    "enrich": "bun run scraper/enrich.ts",
     "fix": "ultracite fix",
     "preview": "astro preview",
     "scrape": "bun run scraper/scrape.ts",
-    "start": "astro dev"
+    "start": "astro dev",
+    "test": "bun test"
   },
   "dependencies": {
     "@astrojs/check": "0.9.12",
@@ -22,7 +24,8 @@
     "jsdom": "^30.1.3",
     "remark": "^15.0.1",
     "remark-unlink": "^5.0.0",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",

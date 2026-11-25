@@ -19,7 +19,7 @@ An Issue containing only answers to a previous Question and no new one. No genui
 A short human-written-quality summary of a Question, added during Enrichment (not present in the newsletter itself).
 
 **Topic**:
-A tag describing what a Question is about (e.g. strings, recursion), drawn from a controlled vocabulary and assigned during Enrichment.
+A descriptor of a subject or data structure central to a Question, or an algorithmic technique explicitly requested or central rather than merely one possible solution (e.g. strings, recursion). Drawn from a controlled vocabulary and assigned during Enrichment; a Question may have up to three Topics or none when confidence is low.
 _Avoid_: tag, category, label
 
 **Number**:
